@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
-    <!-- FIREBASE SDK COMPAT (Funciona con doble clic, sin servidor) -->
+    <!-- FIREBASE SDK COMPAT -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
@@ -45,7 +45,7 @@
         ::-webkit-scrollbar-thumb { background: #d97706; border-radius: 4px; }
         .hidden-section { display: none; }
         .active-tab { border-bottom: 2px solid #fbbf24; color: #fbbf24; }
-        .loading-overlay { position: fixed; inset: 0; background: rgba(2, 44, 34, 0.9); z-index: 100; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+        .loading-overlay { position: fixed; inset: 0; background: rgba(2, 44, 34, 0.95); z-index: 100; display: flex; justify-content: center; align-items: center; flex-direction: column; }
         .spinner { border: 4px solid rgba(251, 191, 36, 0.3); border-radius: 50%; border-top: 4px solid #fbbf24; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .danger-zone { background: linear-gradient(135deg, rgba(127, 29, 29, 0.3) 0%, rgba(185, 28, 28, 0.2) 100%); border: 2px solid #dc2626; }
@@ -56,10 +56,14 @@
 </head>
 <body class="font-sans min-h-screen flex flex-col">
 
-    <!-- Loading Overlay -->
+    <!-- Loading Overlay con manejo de errores -->
     <div id="loading" class="loading-overlay">
         <div class="spinner mb-4"></div>
-        <p class="gold-text font-bold uppercase tracking-widest">Conectando con la base de datos...</p>
+        <p class="gold-text font-bold uppercase tracking-widest mb-2">Conectando con la base de datos...</p>
+        <p id="loadingStatus" class="text-amber-200/70 text-sm">Inicializando Firebase</p>
+        <button onclick="forceContinue()" class="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-bold transition-colors">
+            Si tarda mucho, clic aquí para continuar
+        </button>
     </div>
 
     <!-- HEADER -->
@@ -303,7 +307,7 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Inicializar Firebase con versión COMPAT (funciona con doble clic)
+        // CONFIGURACIÓN FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyC0NNnkL85YXPBkQk4aNW3xxZ4dd408X5k",
             authDomain: "polla-hipica-prueba.firebaseapp.com",
@@ -312,12 +316,8 @@
             messagingSenderId: "310867611472",
             appId: "1:310867611472:web:9b4235f8be3e185345e655"
         };
-        
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
 
-        let currentPlayer = null;
-        let playerEditing = null;
+        let db, currentPlayer = null, playerEditing = null;
         let appSettings = { betValue: 10, totalCollected: 0 };
         let raceConfig = {
             1: { count: 8, scratched: [] }, 2: { count: 10, scratched: [] },
@@ -330,38 +330,80 @@
             5: { first: "", second: "", third: "" }, 6: { first: "", second: "", third: "" }
         };
         let allPlayers = [];
+        let firebaseReady = false;
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                await loadInitialData();
-                setupRealtimeListeners();
-                document.getElementById('loading').classList.add('hidden-section');
-            } catch (error) {
-                console.error("Error Firebase:", error);
-                document.getElementById('loading').innerHTML = `<p class="text-red-400 font-bold">Error de conexión con Firebase.</p>`;
+        // Inicializar Firebase con manejo de errores
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            db.settings({ persistence: false });
+            
+            // Probar conexión
+            db.collection("players").limit(1).get()
+                .then(() => {
+                    console.log("✅ Firebase conectado");
+                    firebaseReady = true;
+                    loadInitialData();
+                })
+                .catch(error => {
+                    console.error("❌ Error Firebase:", error);
+                    document.getElementById('loadingStatus').innerHTML = 
+                        `Error de conexión.<br><span class="text-red-400">Verifica las reglas de Firestore</span><br><small class="text-amber-200/50">${error.message}</small>`;
+                });
+        } catch (error) {
+            console.error("❌ Error inicializando:", error);
+            document.getElementById('loadingStatus').innerHTML = 
+                `Error crítico: ${error.message}`;
+        }
+
+        // Timeout de seguridad
+        setTimeout(() => {
+            if (!firebaseReady) {
+                document.getElementById('loadingStatus').innerHTML = 
+                    `⚠️ Conexión lenta o fallida<br><small class="text-amber-200/70">Puedes continuar en modo offline</small>`;
             }
-        });
+        }, 8000);
+
+        function hideLoading() {
+            document.getElementById('loading').classList.add('hidden-section');
+        }
+
+        function forceContinue() {
+            hideLoading();
+            if (!firebaseReady) {
+                alert("⚠️ Modo offline activado. Los datos NO se guardarán en Firebase.");
+            }
+        }
 
         async function loadInitialData() {
-            for (let i = 1; i <= 6; i++) {
-                const docSnap = await db.collection("races").doc(i.toString()).get();
-                if (docSnap.exists) raceConfig[i] = docSnap.data();
+            try {
+                for (let i = 1; i <= 6; i++) {
+                    const docSnap = await db.collection("races").doc(i.toString()).get();
+                    if (docSnap.exists) raceConfig[i] = docSnap.data();
+                }
+                for (let i = 1; i <= 6; i++) {
+                    const docSnap = await db.collection("results").doc(i.toString()).get();
+                    if (docSnap.exists) resultsConfig[i] = docSnap.data();
+                }
+                const settingsSnap = await db.collection("settings").doc("general").get();
+                if (settingsSnap.exists) {
+                    appSettings = settingsSnap.data();
+                    document.getElementById('betValue').value = appSettings.betValue || 10;
+                }
+                renderAdminRacesConfig();
+                renderAdminResultsConfig();
+                calculatePrize();
+                setupRealtimeListeners();
+                hideLoading();
+            } catch (error) {
+                console.error("Error cargando datos:", error);
+                document.getElementById('loadingStatus').innerHTML = 
+                    `Error cargando datos: ${error.message}`;
             }
-            for (let i = 1; i <= 6; i++) {
-                const docSnap = await db.collection("results").doc(i.toString()).get();
-                if (docSnap.exists) resultsConfig[i] = docSnap.data();
-            }
-            const settingsSnap = await db.collection("settings").doc("general").get();
-            if (settingsSnap.exists) {
-                appSettings = settingsSnap.data();
-                document.getElementById('betValue').value = appSettings.betValue || 10;
-            }
-            renderAdminRacesConfig();
-            renderAdminResultsConfig();
-            calculatePrize();
         }
 
         function setupRealtimeListeners() {
+            if (!db) return;
             db.collection("players").onSnapshot((snapshot) => {
                 allPlayers = [];
                 snapshot.forEach(doc => {
@@ -424,7 +466,7 @@
             
             document.getElementById('raceSelectionBlock').classList.remove('hidden-section');
             
-            if (!existingPlayer) {
+            if (!existingPlayer && db) {
                 const newPlayerData = {
                     name: currentPlayer,
                     picks: {1: "", 2: "", 3: "", 4: "", 5: "", 6: ""},
@@ -433,7 +475,7 @@
                     timestamp: new Date().toISOString()
                 };
                 await db.collection("players").doc(currentPlayer).set(newPlayerData);
-            } else {
+            } else if (existingPlayer) {
                 loadPlayerPicks(existingPlayer.picks);
             }
             renderRacesGrid();
@@ -469,16 +511,16 @@
             }
         }
 
-        function selectHorse(race, horse, btnElement) {
+        async function selectHorse(race, horse, btnElement) {
             const raceButtons = document.querySelectorAll(`#buttons-race-${race} .horse-btn`);
             raceButtons.forEach(btn => btn.classList.remove('selected'));
             btnElement.classList.add('selected');
 
-            if (currentPlayer) {
+            if (currentPlayer && db) {
                 const player = allPlayers.find(p => p.name === currentPlayer);
                 if (player) {
                     player.picks[race] = horse;
-                    db.collection("players").doc(currentPlayer).update({
+                    await db.collection("players").doc(currentPlayer).update({
                         [`picks.${race}`]: horse
                     });
                 }
@@ -553,6 +595,7 @@
         }
 
         async function saveRaceConfig() {
+            if (!db) return alert("Firebase no está conectado");
             const batch = db.batch();
             for (let i = 1; i <= 6; i++) {
                 const ref = db.collection("races").doc(i.toString());
@@ -585,6 +628,7 @@
         }
 
         async function calculateAllScores() {
+            if (!db) return alert("Firebase no está conectado");
             const batch = db.batch();
             for (let i = 1; i <= 6; i++) {
                 resultsConfig[i] = {
@@ -729,7 +773,7 @@
         }
 
         async function saveEditedPrediction() {
-            if (!playerEditing) return;
+            if (!playerEditing || !db) return;
             await db.collection("players").doc(playerEditing.name).update({
                 picks: playerEditing.picks
             });
@@ -774,6 +818,7 @@
         }
 
         async function updateBetValue(val) {
+            if (!db) return;
             appSettings.betValue = parseFloat(val) || 0;
             await db.collection("settings").doc("general").update({ betValue: appSettings.betValue });
             calculatePrize();
@@ -793,8 +838,9 @@
         // =================== ZONA ROJA ===================
         
         async function resetAllPlayers() {
+            if (!db) return alert("Firebase no está conectado");
             if (!confirm("⚠️ ATENCIÓN: Vas a ELIMINAR TODOS los participantes.\n\n¿Estás completamente seguro?")) return;
-            if (!confirm("🔴 CONFIRMACIÓN FINAL: ¿Borrar " + allPlayers.length + " participantes?")) return;
+            if (!confirm(" CONFIRMACIÓN FINAL: ¿Borrar " + allPlayers.length + " participantes?")) return;
 
             const batch = db.batch();
             const snapshot = await db.collection("players").get();
@@ -804,6 +850,7 @@
         }
 
         async function resetResults() {
+            if (!db) return alert("Firebase no está conectado");
             if (!confirm("⚠️ Vas a limpiar los resultados de las 6 carreras.\n\n¿Continuar?")) return;
 
             const batch = db.batch();
@@ -829,6 +876,7 @@
         }
 
         async function resetScratched() {
+            if (!db) return alert("Firebase no está conectado");
             if (!confirm("⚠️ Vas a quitar la marca de 'retirado' de TODOS los ejemplares.\n\n¿Continuar?")) return;
 
             const batch = db.batch();
@@ -843,7 +891,8 @@
         }
 
         async function fullReset() {
-            if (!confirm("🔴🔴🔴 ADVERTENCIA EXTREMA 🔴🔴🔴\n\nVas a RESETEAR TODO:\n✓ Borrar participantes\n✓ Limpiar resultados\n✓ Quitar retirados\n\n¿Continuar?")) return;
+            if (!db) return alert("Firebase no está conectado");
+            if (!confirm("🔴🔴 ADVERTENCIA EXTREMA 🔴🔴🔴\n\nVas a RESETEAR TODO:\n✓ Borrar participantes\n✓ Limpiar resultados\n✓ Quitar retirados\n\n¿Continuar?")) return;
             
             const confirmation = prompt("Escribe SI (en mayúsculas) para confirmar:");
             if (confirmation !== "SI") {
