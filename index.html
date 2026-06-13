@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polla Hípica - Lujo y Pronósticos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: { 950: '#022c22', 900: '#064e3b', 800: '#065f46' },
+                        amber: { 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706' }
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #022c22;
+            background-image: radial-gradient(circle at 50% 0%, #064e3b 0%, #022c22 70%);
+            color: #fbbf24;
+        }
+        .glass-card {
+            background: rgba(6, 78, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(251, 191, 36, 0.1);
+        }
+        .gold-btn {
+            background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+            color: #022c22;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+        }
+        .gold-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(251, 191, 36, 0.4);
+        }
+        .gold-text {
+            color: #fbbf24;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .input-luxury {
+            background: rgba(2, 44, 34, 0.8);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            color: #fbbf24;
+        }
+        .input-luxury:focus {
+            outline: none;
+            border-color: #fbbf24;
+            box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.2);
+        }
+        /* Estilos para los botones de ejemplares */
+        .horse-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .horse-btn:hover:not(.selected) {
+            background-color: rgba(251, 191, 36, 0.15);
+            transform: scale(1.05);
+        }
+        .horse-btn.selected {
+            background-color: #fbbf24;
+            border-color: #fbbf24;
+            color: #022c22;
+            font-weight: 900;
+            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+            transform: scale(1.1);
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #022c22; }
+        ::-webkit-scrollbar-thumb { background: #d97706; border-radius: 4px; }
+        .hidden-section { display: none; }
+        .active-tab { border-bottom: 2px solid #fbbf24; color: #fbbf24; }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
+</head>
+<body class="font-sans min-h-screen flex flex-col">
+
+    <!-- HEADER -->
+    <header class="sticky top-0 z-50 glass-card border-b border-amber-500/30">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-horse-head text-3xl text-amber-400"></i>
+                <h1 class="text-2xl md:text-3xl font-black uppercase tracking-wider gold-text">Polla Hípica</h1>
+            </div>
+            <nav class="flex gap-4 md:gap-6">
+                <button onclick="showView('main')" class="font-bold uppercase text-sm hover:text-amber-300 transition-colors">Inicio</button>
+                <button onclick="showView('ranking')" class="font-bold uppercase text-sm hover:text-amber-300 transition-colors">Ranking</button>
+                <button onclick="showView('admin')" class="font-bold uppercase text-sm text-amber-400 border border-amber-500/50 px-3 py-1 rounded hover:bg-amber-500/10 transition-colors">
+                    <i class="fa-solid fa-lock mr-1"></i> Admin
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full">
+
+        <!-- VISTA PRINCIPAL: PARTICIPANTE -->
+        <section id="view-main" class="space-y-8">
+            
+            <!-- Bloque de Registro -->
+            <div class="glass-card rounded-2xl p-8 max-w-2xl mx-auto text-center">
+                <h2 class="text-2xl font-black uppercase mb-6 gold-text">Ingresa a la Jugada</h2>
+                <div class="flex flex-col md:flex-row gap-4 items-center justify-center">
+                    <input type="text" id="playerName" placeholder="Tu Nombre o Apodo" class="input-luxury rounded-lg px-4 py-3 w-full md:w-80 text-lg font-semibold placeholder-amber-700/50">
+                    <button onclick="registerPlayer()" class="gold-btn px-8 py-3 rounded-lg w-full md:w-auto shadow-lg shadow-amber-500/20">
+                        PARTICIPAR
+                    </button>
+                </div>
+                <p id="nameSuggestion" class="text-amber-400 text-sm mt-3 hidden"></p>
+            </div>
+
+            <!-- Bloque de Selección de Carreras (Botones) -->
+            <div id="raceSelectionBlock" class="hidden-section glass-card rounded-2xl p-6 md:p-8">
+                <h3 class="text-xl font-black uppercase mb-6 gold-text border-b border-amber-500/30 pb-2 text-center">
+                    <i class="fa-solid fa-ticket mr-2"></i> Selecciona 1 Ejemplar por Válida
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="racesGrid">
+                    <!-- Se genera dinámicamente con botones -->
+                </div>
+                <div class="mt-8 text-center">
+                    <button onclick="submitPredictions()" class="gold-btn px-12 py-4 rounded-xl text-lg shadow-xl shadow-amber-500/30">
+                        <i class="fa-solid fa-paper-plane mr-2"></i> ENVIAR JUGADA
+                    </button>
+                </div>
+            </div>
+
+            <!-- REGLAMENTO -->
+            <div class="glass-card rounded-2xl p-6 md:p-8 mt-8">
+                <h3 class="text-xl font-black uppercase mb-4 gold-text"><i class="fa-solid fa-scale-balanced mr-2"></i> Reglamento de Puntuación</h3>
+                <ul class="space-y-3 text-amber-100/80 text-sm md:text-base list-disc list-inside">
+                    <li><strong class="text-amber-400">1er Lugar:</strong> 5 puntos. | <strong class="text-amber-400">2do Lugar:</strong> 3 puntos. | <strong class="text-amber-400">3er Lugar:</strong> 1 punto.</li>
+                    <li><strong>Empate 1er lugar:</strong> Ambos otorgan 5 pts, no se otorga puntuación al 3er lugar.</li>
+                    <li><strong>Empate 2do lugar:</strong> Ambos otorgan 3 pts, no se otorga puntuación al 3er lugar.</li>
+                    <li><strong>Empate 3er lugar:</strong> Ambos otorgan 1 pto.</li>
+                    <li><strong>Caballos Retirados:</strong> Se tomará el número siguiente activo. Si el siguiente también está retirado, se buscará el siguiente hasta encontrar un ejemplar activo.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- VISTA RANKING -->
+        <section id="view-ranking" class="hidden-section space-y-8">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-black uppercase gold-text">Tablas de Posiciones</h2>
+                <p class="text-amber-200/70 mt-2">Ordenadas de mayor a menor puntaje</p>
+            </div>
+
+            <!-- Tabla de Transparencia -->
+            <div class="glass-card rounded-2xl p-6 overflow-x-auto">
+                <h3 class="text-lg font-black uppercase mb-4 text-amber-400 border-b border-amber-500/30 pb-2">Tabla de Transparencia (Selecciones)</h3>
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="text-amber-400 text-sm uppercase border-b border-amber-500/30">
+                            <th class="p-3">Nombre</th>
+                            <th class="p-3 text-center">1V</th>
+                            <th class="p-3 text-center">2V</th>
+                            <th class="p-3 text-center">3V</th>
+                            <th class="p-3 text-center">4V</th>
+                            <th class="p-3 text-center">5V</th>
+                            <th class="p-3 text-center">6V</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transparencyTableBody" class="text-amber-100 text-sm">
+                        <!-- JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Tabla de Resultados -->
+            <div class="glass-card rounded-2xl p-6 overflow-x-auto">
+                <h3 class="text-lg font-black uppercase mb-4 text-amber-400 border-b border-amber-500/30 pb-2">Ranking General con Puntaje</h3>
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="text-amber-400 text-sm uppercase border-b border-amber-500/30">
+                            <th class="p-3">Nombre</th>
+                            <th class="p-3 text-center">1V</th><th class="p-3 text-center">Pts</th>
+                            <th class="p-3 text-center">2V</th><th class="p-3 text-center">Pts</th>
+                            <th class="p-3 text-center">3V</th><th class="p-3 text-center">Pts</th>
+                            <th class="p-3 text-center">4V</th><th class="p-3 text-center">Pts</th>
+                            <th class="p-3 text-center">5V</th><th class="p-3 text-center">Pts</th>
+                            <th class="p-3 text-center">6V</th><th class="p-3 text-center">Pts</th>
+                            <th class="p-3 text-center font-black text-amber-400">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankingTableBody" class="text-amber-100 text-sm">
+                        <!-- JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- VISTA ADMIN -->
+        <section id="view-admin" class="hidden-section space-y-6">
+            <div class="text-center mb-6">
+                <h2 class="text-3xl font-black uppercase gold-text">Panel de Administrador</h2>
+            </div>
+
+            <!-- Tabs Admin -->
+            <div class="flex flex-wrap gap-2 border-b border-amber-500/30 mb-6">
+                <button onclick="showAdminTab('montos')" class="admin-tab active-tab px-4 py-2 font-bold uppercase text-sm hover:text-amber-300" data-tab="montos">Montos</button>
+                <button onclick="showAdminTab('carreras')" class="admin-tab px-4 py-2 font-bold uppercase text-sm text-amber-200/60 hover:text-amber-300" data-tab="carreras">Carreras / Retirados</button>
+                <button onclick="showAdminTab('resultados')" class="admin-tab px-4 py-2 font-bold uppercase text-sm text-amber-200/60 hover:text-amber-300" data-tab="resultados">Resultados</button>
+                <button onclick="showAdminTab('editar')" class="admin-tab px-4 py-2 font-bold uppercase text-sm text-amber-200/60 hover:text-amber-300" data-tab="editar">Editar Jugada</button>
+                <button onclick="showAdminTab('pdfs')" class="admin-tab px-4 py-2 font-bold uppercase text-sm text-amber-200/60 hover:text-amber-300" data-tab="pdfs">PDFs / WhatsApp</button>
+            </div>
+
+            <!-- Tab: Montos -->
+            <div id="tab-montos" class="admin-content glass-card rounded-2xl p-6">
+                <h3 class="text-xl font-black uppercase mb-4 gold-text">Contabilidad Básica</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-amber-400 text-sm font-bold mb-2">Valor de la Jugada ($)</label>
+                        <input type="number" id="betValue" value="10" class="input-luxury w-full rounded-lg px-4 py-2" onchange="calculatePrize()">
+                    </div>
+                    <div>
+                        <label class="block text-amber-400 text-sm font-bold mb-2">Total Recaudado (Simulado)</label>
+                        <input type="text" id="totalCollected" value="1000" class="input-luxury w-full rounded-lg px-4 py-2 bg-emerald-950" readonly>
+                    </div>
+                    <div>
+                        <label class="block text-amber-400 text-sm font-bold mb-2">Premio (80%)</label>
+                        <input type="text" id="prizePool" class="input-luxury w-full rounded-lg px-4 py-2 bg-emerald-800 font-black text-amber-400" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Carreras / Retirados -->
+            <div id="tab-carreras" class="admin-content hidden-section glass-card rounded-2xl p-6">
+                <h3 class="text-xl font-black uppercase mb-4 gold-text">Configuración de Carreras y Retirados</h3>
+                <div id="adminRacesConfig" class="space-y-4">
+                    <!-- Generado por JS -->
+                </div>
+                <button onclick="saveRaceConfig()" class="gold-btn mt-6 px-6 py-2 rounded-lg text-sm">Guardar Configuración</button>
+            </div>
+
+            <!-- Tab: Resultados -->
+            <div id="tab-resultados" class="admin-content hidden-section glass-card rounded-2xl p-6">
+                <h3 class="text-xl font-black uppercase mb-4 gold-text">Carga de Resultados (Solo Números)</h3>
+                <p class="text-amber-200/70 text-sm mb-4">Separa con coma si hay empate (ej: "3,5" para empate en 1er lugar).</p>
+                <div id="adminResultsConfig" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Generado por JS -->
+                </div>
+                <button onclick="calculateAllScores()" class="gold-btn mt-6 px-6 py-2 rounded-lg text-sm w-full md:w-auto">
+                    <i class="fa-solid fa-calculator mr-2"></i> Procesar Resultados y Puntuar
+                </button>
+            </div>
+
+            <!-- Tab: Editar -->
+            <div id="tab-editar" class="admin-content hidden-section glass-card rounded-2xl p-6">
+                <h3 class="text-xl font-black uppercase mb-4 gold-text">Editar Jugada de Participante</h3>
+                <div class="flex gap-4 mb-6">
+                    <input type="text" id="editSearchName" placeholder="Buscar por nombre..." class="input-luxury rounded-lg px-4 py-2 flex-grow">
+                    <button onclick="searchPlayerToEdit()" class="gold-btn px-6 py-2 rounded-lg text-sm">Buscar</button>
+                </div>
+                <div id="editPlayerForm" class="hidden-section space-y-4">
+                    <p class="text-amber-400 font-bold text-center mb-4">Editando a: <span id="editingPlayerName" class="text-white"></span></p>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="editRacesGrid">
+                        <!-- JS con botones -->
+                    </div>
+                    <button onclick="saveEditedPrediction()" class="gold-btn px-6 py-2 rounded-lg text-sm mt-6 w-full">Guardar Cambios</button>
+                </div>
+            </div>
+
+            <!-- Tab: PDFs / WhatsApp -->
+            <div id="tab-pdfs" class="admin-content hidden-section glass-card rounded-2xl p-6">
+                <h3 class="text-xl font-black uppercase mb-4 gold-text">Exportar y Compartir</h3>
+                
+                <div class="mb-6">
+                    <h4 class="text-amber-400 font-bold mb-2">Log para WhatsApp (Copia y Pega)</h4>
+                    <textarea id="whatsappLog" rows="6" class="input-luxury w-full rounded-lg px-4 py-2 font-mono text-xs" readonly></textarea>
+                    <button onclick="copyToClipboard()" class="mt-2 text-amber-400 text-sm underline hover:text-amber-300">Copiar al portapapeles</button>
+                </div>
+
+                <div class="flex gap-4">
+                    <button onclick="generatePDF()" class="gold-btn px-6 py-3 rounded-lg text-sm flex-1">
+                        <i class="fa-solid fa-file-pdf mr-2"></i> Descargar Ranking en PDF
+                    </button>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- BASE DE DATOS SIMULADA ---
+        let db = {
+            players: [], 
+            races: {
+                1: { count: 8, scratched: [] },
+                2: { count: 10, scratched: [] },
+                3: { count: 9, scratched: [] },
+                4: { count: 12, scratched: [] },
+                5: { count: 8, scratched: [] },
+                6: { count: 10, scratched: [] }
+            },
+            results: {
+                1: { first: "", second: "", third: "" },
+                2: { first: "", second: "", third: "" },
+                3: { first: "", second: "", third: "" },
+                4: { first: "", second: "", third: "" },
+                5: { first: "", second: "", third: "" },
+                6: { first: "", second: "", third: "" }
+            }
+        };
+
+        let currentPlayer = null;
+        let playerEditing = null;
+
+        // --- INICIALIZACIÓN ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderRacesGrid();
+            renderAdminRacesConfig();
+            renderAdminResultsConfig();
+            calculatePrize();
+            updateRankingTables();
+        });
+
+        // --- NAVEGACIÓN ---
+        function showView(viewName) {
+            document.querySelectorAll('section').forEach(el => el.classList.add('hidden-section'));
+            document.getElementById(`view-${viewName}`).classList.remove('hidden-section');
+            if(viewName === 'ranking') updateRankingTables();
+            if(viewName === 'admin') generateWhatsappLog();
+        }
+
+        function showAdminTab(tabName) {
+            document.querySelectorAll('.admin-content').forEach(el => el.classList.add('hidden-section'));
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden-section');
+            
+            document.querySelectorAll('.admin-tab').forEach(el => {
+                el.classList.remove('active-tab', 'text-amber-400');
+                el.classList.add('text-amber-200/60');
+            });
+            const activeBtn = document.querySelector(`.admin-tab[data-tab="${tabName}"]`);
+            activeBtn.classList.add('active-tab', 'text-amber-400');
+            activeBtn.classList.remove('text-amber-200/60');
+        }
+
+        // --- LÓGICA DE REGISTRO ---
+        function registerPlayer() {
+            const input = document.getElementById('playerName');
+            let name = input.value.trim();
+            if (!name) return alert("Por favor ingresa un nombre o apodo.");
+
+            let baseName = name;
+            let counter = 1;
+            let finalName = baseName;
+            
+            while (db.players.some(p => p.name === finalName)) {
+                counter++;
+                finalName = `${baseName}_${counter.toString().padStart(2, '0')}`;
+            }
+
+            if (finalName !== baseName) {
+                document.getElementById('nameSuggestion').textContent = `El nombre "${baseName}" ya existe. Te hemos registrado como: ${finalName}`;
+                document.getElementById('nameSuggestion').classList.remove('hidden');
+            } else {
+                document.getElementById('nameSuggestion').classList.add('hidden');
+            }
+
+            currentPlayer = finalName;
+            const existingPlayer = db.players.find(p => p.name === currentPlayer);
+            
+            document.getElementById('raceSelectionBlock').classList.remove('hidden-section');
+            
+            if (existingPlayer) {
+                loadPlayerPicks(existingPlayer.picks);
+            } else {
+                db.players.push({
+                    name: currentPlayer,
+                    picks: {1: "", 2: "", 3: "", 4: "", 5: "", 6: ""},
+                    scores: {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0},
+                    total: 0
+                });
+            }
+            // Scroll suave hacia las carreras
+            document.getElementById('raceSelectionBlock').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- RENDERIZADO DE CARRERAS CON BOTONES (JUGADOR) ---
+        function renderRacesGrid() {
+            const grid = document.getElementById('racesGrid');
+            grid.innerHTML = '';
+            for (let i = 1; i <= 6; i++) {
+                const race = db.races[i];
+                let buttonsHtml = '';
+                
+                for (let j = 1; j <= race.count; j++) {
+                    if (!race.scratched.includes(j)) {
+                        buttonsHtml += `
+                            <button 
+                                type="button"
+                                id="btn-race-${i}-horse-${j}"
+                                onclick="selectHorse(${i}, ${j}, this)"
+                                class="horse-btn w-10 h-10 rounded-lg border border-amber-500/30 bg-emerald-900/50 text-amber-400 font-bold text-sm flex items-center justify-center"
+                            >
+                                ${j}
+                            </button>
+                        `;
+                    }
+                }
+                
+                grid.innerHTML += `
+                    <div class="bg-emerald-950/50 border border-amber-500/20 rounded-xl p-4">
+                        <h4 class="font-black uppercase text-amber-400 mb-3 text-center text-sm tracking-wider">${i}ª Válida</h4>
+                        <div class="flex flex-wrap gap-2 justify-center" id="buttons-race-${i}">
+                            ${buttonsHtml}
+                        </div>
+                        <p class="text-xs text-amber-200/50 text-center mt-3">${race.count - race.scratched.length} ejemplares activos</p>
+                    </div>
+                `;
+            }
+        }
+
+        function selectHorse(race, horse, btnElement) {
+            // 1. Quitar clase 'selected' de todos los botones de esta carrera
+            const raceButtons = document.querySelectorAll(`#buttons-race-${race} .horse-btn`);
+            raceButtons.forEach(btn => {
+                btn.classList.remove('selected');
+            });
+
+            // 2. Agregar clase 'selected' al botón clickeado
+            btnElement.classList.add('selected');
+
+            // 3. Actualizar estado
+            if (currentPlayer) {
+                const player = db.players.find(p => p.name === currentPlayer);
+                player.picks[race] = horse;
+            }
+        }
+
+        function loadPlayerPicks(picks) {
+            for (let i = 1; i <= 6; i++) {
+                if (picks[i]) {
+                    const btn = document.getElementById(`btn-race-${i}-horse-${picks[i]}`);
+                    if (btn) {
+                        selectHorse(i, picks[i], btn);
+                    }
+                }
+            }
+        }
+
+        function submitPredictions() {
+            if (!currentPlayer) return;
+            const player = db.players.find(p => p.name === currentPlayer);
+            
+            for (let i = 1; i <= 6; i++) {
+                if (!player.picks[i]) return alert(`Por favor selecciona un ejemplar para la ${i}ª Válida.`);
+            }
+
+            alert(`¡Jugada enviada con éxito para ${currentPlayer}!`);
+            showView('ranking');
+        }
+
+        // --- LÓGICA DE ADMIN: CARRERAS Y RETIRADOS ---
+        function renderAdminRacesConfig() {
+            const container = document.getElementById('adminRacesConfig');
+            container.innerHTML = '';
+            for (let i = 1; i <= 6; i++) {
+                const race = db.races[i];
+                let scratchedChecks = '';
+                for (let j = 1; j <= race.count; j++) {
+                    const isScratched = race.scratched.includes(j) ? 'checked' : '';
+                    scratchedChecks += `
+                        <label class="inline-flex items-center mr-3 mb-2 cursor-pointer">
+                            <input type="checkbox" class="form-checkbox text-amber-500 rounded bg-emerald-950 border-amber-500/50" 
+                                onchange="toggleScratch(${i}, ${j})" ${isScratched}>
+                            <span class="ml-2 text-amber-100 text-sm">#${j}</span>
+                        </label>
+                    `;
+                }
+
+                container.innerHTML += `
+                    <div class="border border-amber-500/20 rounded-lg p-4 bg-emerald-950/30">
+                        <div class="flex items-center gap-4 mb-3">
+                            <label class="text-amber-400 font-bold w-32">${i}ª Válida:</label>
+                            <input type="number" id="race-count-${i}" value="${race.count}" min="4" max="16" 
+                                class="input-luxury w-20 rounded px-2 py-1 text-center" onchange="updateRaceCount(${i}, this.value)">
+                            <span class="text-amber-200/60 text-sm">ejemplares</span>
+                        </div>
+                        <div class="pl-32">
+                            <p class="text-amber-400 text-xs font-bold uppercase mb-2">Marcar Retirados:</p>
+                            <div class="flex flex-wrap">${scratchedChecks}</div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function updateRaceCount(race, count) {
+            db.races[race].count = parseInt(count);
+            db.races[race].scratched = []; 
+            renderAdminRacesConfig();
+            renderRacesGrid(); 
+        }
+
+        function toggleScratch(race, horse) {
+            const idx = db.races[race].scratched.indexOf(horse);
+            if (idx > -1) {
+                db.races[race].scratched.splice(idx, 1);
+            } else {
+                db.races[race].scratched.push(horse);
+            }
+            renderRacesGrid(); 
+        }
+
+        function saveRaceConfig() {
+            alert("Configuración de carreras y retirados guardada.");
+            renderRacesGrid();
+        }
+
+        // --- LÓGICA DE ADMIN: RESULTADOS ---
+        function renderAdminResultsConfig() {
+            const container = document.getElementById('adminResultsConfig');
+            container.innerHTML = '';
+            for (let i = 1; i <= 6; i++) {
+                const res = db.results[i];
+                container.innerHTML += `
+                    <div class="border border-amber-500/20 rounded-lg p-4 bg-emerald-950/30">
+                        <h4 class="font-black uppercase text-amber-400 mb-3 text-center">${i}ª Válida</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-amber-200 text-xs uppercase font-bold block mb-1">1er Lugar (Separa con coma si hay empate)</label>
+                                <input type="text" id="res-${i}-1" value="${res.first}" placeholder="Ej: 3 o 3,5" class="input-luxury w-full rounded px-3 py-2 text-center font-bold">
+                            </div>
+                            <div>
+                                <label class="text-amber-200 text-xs uppercase font-bold block mb-1">2do Lugar</label>
+                                <input type="text" id="res-${i}-2" value="${res.second}" placeholder="Ej: 7" class="input-luxury w-full rounded px-3 py-2 text-center font-bold">
+                            </div>
+                            <div>
+                                <label class="text-amber-200 text-xs uppercase font-bold block mb-1">3er Lugar</label>
+                                <input type="text" id="res-${i}-3" value="${res.third}" placeholder="Ej: 2" class="input-luxury w-full rounded px-3 py-2 text-center font-bold">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // --- MOTOR DE PUNTUACIÓN ---
+        function calculateAllScores() {
+            for (let i = 1; i <= 6; i++) {
+                db.results[i].first = document.getElementById(`res-${i}-1`).value;
+                db.results[i].second = document.getElementById(`res-${i}-2`).value;
+                db.results[i].third = document.getElementById(`res-${i}-3`).value;
+            }
+
+            db.players.forEach(p => {
+                p.scores = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0};
+                p.total = 0;
+            });
+
+            for (let race = 1; race <= 6; race++) {
+                const res = db.results[race];
+                if (!res.first && !res.second && !res.third) continue;
+
+                const firstPlaces = parseResult(res.first);
+                const secondPlaces = parseResult(res.second);
+                const thirdPlaces = parseResult(res.third);
+
+                db.players.forEach(player => {
+                    let pick = parseInt(player.picks[race]);
+                    if (!pick) return;
+
+                    let effectivePick = pick;
+                    while (db.races[race].scratched.includes(effectivePick)) {
+                        effectivePick++;
+                        if (effectivePick > db.races[race].count) effectivePick = 1; 
+                    }
+
+                    let points = 0;
+                    if (firstPlaces.includes(effectivePick)) points = 5;
+                    else if (secondPlaces.includes(effectivePick)) points = 3;
+                    else if (thirdPlaces.includes(effectivePick)) points = 1;
+
+                    if (points === 1) {
+                        if (firstPlaces.length > 1 || secondPlaces.length > 1) {
+                            points = 0; 
+                        }
+                    }
+
+                    player.scores[race] = points;
+                    player.total += points;
+                });
+            }
+
+            alert("Resultados procesados y puntajes actualizados.");
+            updateRankingTables();
+            generateWhatsappLog();
+        }
+
+        function parseResult(str) {
+            if (!str) return [];
+            return str.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+        }
+
+        // --- TABLAS Y RANKING ---
+        function updateRankingTables() {
+            const sortedPlayers = [...db.players].sort((a, b) => b.total - a.total);
+
+            const transBody = document.getElementById('transparencyTableBody');
+            transBody.innerHTML = '';
+            db.players.forEach(p => {
+                transBody.innerHTML += `
+                    <tr class="border-b border-amber-500/10 hover:bg-amber-500/5 transition-colors">
+                        <td class="p-3 font-bold text-amber-400">${p.name}</td>
+                        <td class="p-3 text-center">${p.picks[1] || '-'}</td>
+                        <td class="p-3 text-center">${p.picks[2] || '-'}</td>
+                        <td class="p-3 text-center">${p.picks[3] || '-'}</td>
+                        <td class="p-3 text-center">${p.picks[4] || '-'}</td>
+                        <td class="p-3 text-center">${p.picks[5] || '-'}</td>
+                        <td class="p-3 text-center">${p.picks[6] || '-'}</td>
+                    </tr>
+                `;
+            });
+
+            const rankBody = document.getElementById('rankingTableBody');
+            rankBody.innerHTML = '';
+            sortedPlayers.forEach((p, index) => {
+                const isTop3 = index < 3 ? 'bg-amber-500/10 font-bold text-amber-400' : '';
+                rankBody.innerHTML += `
+                    <tr class="border-b border-amber-500/10 hover:bg-amber-500/5 transition-colors ${isTop3}">
+                        <td class="p-3">${index + 1}. ${p.name}</td>
+                        <td class="p-3 text-center">${p.picks[1] || '-'}</td><td class="p-3 text-center text-amber-200">${p.scores[1]}</td>
+                        <td class="p-3 text-center">${p.picks[2] || '-'}</td><td class="p-3 text-center text-amber-200">${p.scores[2]}</td>
+                        <td class="p-3 text-center">${p.picks[3] || '-'}</td><td class="p-3 text-center text-amber-200">${p.scores[3]}</td>
+                        <td class="p-3 text-center">${p.picks[4] || '-'}</td><td class="p-3 text-center text-amber-200">${p.scores[4]}</td>
+                        <td class="p-3 text-center">${p.picks[5] || '-'}</td><td class="p-3 text-center text-amber-200">${p.scores[5]}</td>
+                        <td class="p-3 text-center">${p.picks[6] || '-'}</td><td class="p-3 text-center text-amber-200">${p.scores[6]}</td>
+                        <td class="p-3 text-center font-black text-amber-400 text-lg">${p.total}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // --- ADMIN: EDITAR CON BOTONES ---
+        function searchPlayerToEdit() {
+            const name = document.getElementById('editSearchName').value.trim();
+            playerEditing = db.players.find(p => p.name.toLowerCase() === name.toLowerCase());
+            
+            if (playerEditing) {
+                document.getElementById('editPlayerForm').classList.remove('hidden-section');
+                document.getElementById('editingPlayerName').textContent = playerEditing.name;
+                
+                const grid = document.getElementById('editRacesGrid');
+                grid.innerHTML = '';
+                for (let i = 1; i <= 6; i++) {
+                    const race = db.races[i];
+                    let buttonsHtml = '';
+                    for (let j = 1; j <= race.count; j++) {
+                        if (!race.scratched.includes(j)) {
+                            const isSelected = playerEditing.picks[i] == j;
+                            const activeClasses = isSelected ? 'selected' : '';
+                            
+                            buttonsHtml += `
+                                <button 
+                                    type="button"
+                                    id="edit-btn-race-${i}-horse-${j}"
+                                    onclick="selectEditHorse(${i}, ${j}, this)"
+                                    class="horse-btn w-10 h-10 rounded-lg border border-amber-500/30 bg-emerald-900/50 text-amber-400 font-bold text-sm flex items-center justify-center ${activeClasses}"
+                                >
+                                    ${j}
+                                </button>
+                            `;
+                        }
+                    }
+                    grid.innerHTML += `
+                        <div class="bg-emerald-950/30 border border-amber-500/20 rounded-lg p-3">
+                            <label class="text-amber-400 text-xs font-black uppercase block mb-2 text-center">${i}ª Válida</label>
+                            <div class="flex flex-wrap gap-2 justify-center" id="edit-buttons-race-${i}">
+                                ${buttonsHtml}
+                            </div>
+                        </div>
+                    `;
+                }
+            } else {
+                alert("Jugador no encontrado.");
+                document.getElementById('editPlayerForm').classList.add('hidden-section');
+            }
+        }
+
+        function selectEditHorse(race, horse, btnElement) {
+            const raceButtons = document.querySelectorAll(`#edit-buttons-race-${race} .horse-btn`);
+            raceButtons.forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            btnElement.classList.add('selected');
+
+            if (playerEditing) {
+                playerEditing.picks[race] = horse;
+            }
+        }
+
+        function saveEditedPrediction() {
+            if (!playerEditing) return;
+            alert("Jugada actualizada correctamente.");
+            document.getElementById('editPlayerForm').classList.add('hidden-section');
+            document.getElementById('editSearchName').value = '';
+            updateRankingTables();
+        }
+
+        // --- ADMIN: PDF Y WHATSAPP ---
+        function generateWhatsappLog() {
+            const sortedPlayers = [...db.players].sort((a, b) => b.total - a.total);
+            let log = "🏆 *Polla Hípica - Ranking* 🏆\n";
+            log += "NOMBRE|1V|P|2V|P|3V|P|4V|P|5V|P|6V|P|Tot|\n";
+            log += "-----------------------------------\n";
+            
+            sortedPlayers.forEach(p => {
+                log += `${p.name.substring(0, 10).padEnd(10, ' ')}|` +
+                       `${(p.picks[1]||'-').toString().padEnd(2, ' ')}|${p.scores[1]}|` +
+                       `${(p.picks[2]||'-').toString().padEnd(2, ' ')}|${p.scores[2]}|` +
+                       `${(p.picks[3]||'-').toString().padEnd(2, ' ')}|${p.scores[3]}|` +
+                       `${(p.picks[4]||'-').toString().padEnd(2, ' ')}|${p.scores[4]}|` +
+                       `${(p.picks[5]||'-').toString().padEnd(2, ' ')}|${p.scores[5]}|` +
+                       `${(p.picks[6]||'-').toString().padEnd(2, ' ')}|${p.scores[6]}|` +
+                       `${p.total.toString().padEnd(3, ' ')}\n`;
+            });
+            
+            document.getElementById('whatsappLog').value = log;
+        }
+
+        function copyToClipboard() {
+            const copyText = document.getElementById("whatsappLog");
+            copyText.select();
+            document.execCommand("copy");
+            alert("Log copiado al portapapeles. ¡Listo para WhatsApp!");
+        }
+
+        function generatePDF() {
+            const element = document.getElementById('view-ranking');
+            const opt = {
+                margin: 0.5,
+                filename: 'Ranking_Polla_Hipica.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, backgroundColor: '#022c22' },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
+        function calculatePrize() {
+            const bet = parseFloat(document.getElementById('betValue').value) || 0;
+            const total = parseFloat(document.getElementById('totalCollected').value) || 0;
+            const prize = total * 0.80;
+            document.getElementById('prizePool').value = `$ ${prize.toFixed(2)}`;
+        }
+    </script>
+</body>
+</html>
