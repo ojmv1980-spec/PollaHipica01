@@ -7,8 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    
-    <!-- FIREBASE SDK COMPAT (Paso 1) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
@@ -39,6 +37,7 @@
         .horse-btn { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
         .horse-btn:hover:not(.selected) { background-color: rgba(251, 191, 36, 0.15); transform: scale(1.05); }
         .horse-btn.selected { background-color: #fbbf24; border-color: #fbbf24; color: #022c22; font-weight: 900; box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4); transform: scale(1.1); }
+        .horse-btn.scratched { opacity: 0.3; pointer-events: none; background-color: #7f1d1d; }
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #022c22; }
         ::-webkit-scrollbar-thumb { background: #d97706; border-radius: 4px; }
@@ -47,6 +46,7 @@
         .danger-zone { background: linear-gradient(135deg, rgba(127, 29, 29, 0.3) 0%, rgba(185, 28, 28, 0.2) 100%); border: 2px solid #dc2626; }
         @keyframes pulse-danger { 0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); } 50% { box-shadow: 0 0 20px 5px rgba(220, 38, 38, 0.6); } }
         .pulse-danger { animation: pulse-danger 2s infinite; }
+        .prize-display { background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(217, 119, 6, 0.1) 100%); border: 1px solid rgba(251, 191, 36, 0.3); }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
 </head>
@@ -115,37 +115,9 @@
                 <p class="text-amber-200/70 mt-2">Actualización en tiempo real desde Firebase</p>
             </div>
 
-            <div class="glass-card rounded-2xl p-6 overflow-x-auto">
-                <h3 class="text-lg font-black uppercase mb-4 text-amber-400 border-b border-amber-500/30 pb-2">Tabla de Transparencia (Selecciones)</h3>
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="text-amber-400 text-sm uppercase border-b border-amber-500/30">
-                            <th class="p-3">Nombre</th>
-                            <th class="p-3 text-center">1V</th><th class="p-3 text-center">2V</th><th class="p-3 text-center">3V</th>
-                            <th class="p-3 text-center">4V</th><th class="p-3 text-center">5V</th><th class="p-3 text-center">6V</th>
-                        </tr>
-                    </thead>
-                    <tbody id="transparencyTableBody" class="text-amber-100 text-sm"></tbody>
-                </table>
-            </div>
-
-            <div class="glass-card rounded-2xl p-6 overflow-x-auto">
-                <h3 class="text-lg font-black uppercase mb-4 text-amber-400 border-b border-amber-500/30 pb-2">Ranking General con Puntaje</h3>
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="text-amber-400 text-sm uppercase border-b border-amber-500/30">
-                            <th class="p-3">Nombre</th>
-                            <th class="p-3 text-center">1V</th><th class="p-3 text-center">Pts</th>
-                            <th class="p-3 text-center">2V</th><th class="p-3 text-center">Pts</th>
-                            <th class="p-3 text-center">3V</th><th class="p-3 text-center">Pts</th>
-                            <th class="p-3 text-center">4V</th><th class="p-3 text-center">Pts</th>
-                            <th class="p-3 text-center">5V</th><th class="p-3 text-center">Pts</th>
-                            <th class="p-3 text-center">6V</th><th class="p-3 text-center">Pts</th>
-                            <th class="p-3 text-center font-black text-amber-400">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody id="rankingTableBody" class="text-amber-100 text-sm"></tbody>
-                </table>
+            <!-- Contenedor dinámico de tablas -->
+            <div id="rankingTablesContainer" class="space-y-8">
+                <!-- Las tablas se renderizan dinámicamente según el estado de inscripciones -->
             </div>
         </section>
 
@@ -182,12 +154,45 @@
                         <input type="text" id="prizePool" class="input-luxury w-full rounded-lg px-4 py-2 bg-emerald-800 font-black text-amber-400" readonly>
                     </div>
                 </div>
+                <div class="mt-6 pt-6 border-t border-amber-500/20">
+                    <h4 class="text-lg font-black uppercase text-amber-400 mb-4">Control de Inscripciones</h4>
+                    <div class="flex items-center justify-between bg-emerald-950/50 rounded-lg p-4">
+                        <div>
+                            <p class="font-bold text-amber-200">Estado: <span id="inscripcionesStatus" class="text-amber-400">ABIERTAS</span></p>
+                            <p class="text-sm text-amber-200/70">Participantes válidos: <span id="validPlayersCount">0</span></p>
+                        </div>
+                        <button id="btnToggleInscripciones" onclick="toggleInscripciones()" class="gold-btn px-6 py-3 rounded-lg text-sm">
+                            <i class="fa-solid fa-lock-open mr-2"></i> CERRAR INSCRIPCIONES
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <div id="tab-carreras" class="admin-content hidden-section glass-card rounded-2xl p-6">
-                <h3 class="text-xl font-black uppercase mb-4 gold-text">Configuración de Carreras y Retirados</h3>
-                <div id="adminRacesConfig" class="space-y-4"></div>
-                <button onclick="saveRaceConfig()" class="gold-btn mt-6 px-6 py-2 rounded-lg text-sm">Guardar Configuración</button>
+                <h3 class="text-xl font-black uppercase mb-4 gold-text">Configuración de Carreras</h3>
+                
+                <!-- BLOQUE 1: Cantidad de ejemplares -->
+                <div class="mb-8 p-6 bg-emerald-950/30 border border-amber-500/20 rounded-xl">
+                    <h4 class="text-lg font-black uppercase text-amber-400 mb-4"><i class="fa-solid fa-hashtag mr-2"></i>Cantidad de Ejemplares por Carrera</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="raceCountInputs">
+                        <!-- Inputs generados dinámicamente -->
+                    </div>
+                    <button onclick="saveRaceCounts()" class="gold-btn mt-6 px-6 py-2 rounded-lg text-sm">
+                        <i class="fa-solid fa-save mr-2"></i> Guardar Cantidades
+                    </button>
+                </div>
+
+                <!-- BLOQUE 2: Retirados -->
+                <div class="p-6 bg-red-950/20 border border-red-500/30 rounded-xl">
+                    <h4 class="text-lg font-black uppercase text-red-300 mb-4"><i class="fa-solid fa-horse-circle-xmark mr-2"></i>Marcar Ejemplares Retirados</h4>
+                    <p class="text-amber-200/70 text-sm mb-4">Haz clic en los botones para marcar/desmarcar retirados. Los caballos retirados NO aparecerán en la pantalla de selección del usuario.</p>
+                    <div id="scratchedButtonsContainer" class="space-y-4">
+                        <!-- Botones generados dinámicamente -->
+                    </div>
+                    <button onclick="saveScratchedConfig()" class="danger-btn mt-6 px-6 py-2 rounded-lg text-sm">
+                        <i class="fa-solid fa-save mr-2"></i> Guardar Retirados
+                    </button>
+                </div>
             </div>
 
             <div id="tab-resultados" class="admin-content hidden-section glass-card rounded-2xl p-6">
@@ -200,15 +205,26 @@
             </div>
 
             <div id="tab-editar" class="admin-content hidden-section glass-card rounded-2xl p-6">
-                <h3 class="text-xl font-black uppercase mb-4 gold-text">Editar Jugada de Participante</h3>
-                <div class="flex gap-4 mb-6">
-                    <input type="text" id="editSearchName" placeholder="Buscar por nombre..." class="input-luxury rounded-lg px-4 py-2 flex-grow">
-                    <button onclick="searchPlayerToEdit()" class="gold-btn px-6 py-2 rounded-lg text-sm">Buscar</button>
-                </div>
-                <div id="editPlayerForm" class="hidden-section space-y-4">
-                    <p class="text-amber-400 font-bold text-center mb-4">Editando a: <span id="editingPlayerName" class="text-white"></span></p>
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="editRacesGrid"></div>
-                    <button onclick="saveEditedPrediction()" class="gold-btn px-6 py-2 rounded-lg text-sm mt-6 w-full">Guardar Cambios</button>
+                <h3 class="text-xl font-black uppercase mb-4 gold-text">Editar Jugadas de Participantes</h3>
+                <p class="text-amber-200/70 text-sm mb-4">Haz clic en cualquier número para cambiar la selección del participante.</p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="text-amber-400 text-sm uppercase border-b border-amber-500/30">
+                                <th class="p-3">Nombre</th>
+                                <th class="p-3 text-center">1V</th>
+                                <th class="p-3 text-center">2V</th>
+                                <th class="p-3 text-center">3V</th>
+                                <th class="p-3 text-center">4V</th>
+                                <th class="p-3 text-center">5V</th>
+                                <th class="p-3 text-center">6V</th>
+                                <th class="p-3 text-center">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="editPlayersTableBody" class="text-amber-100 text-sm">
+                            <!-- Filas generadas dinámicamente -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -230,7 +246,7 @@
                 <h3 class="text-2xl font-black uppercase mb-2 danger-text">
                     <i class="fa-solid fa-triangle-exclamation mr-2"></i> ZONA DE PELIGRO
                 </h3>
-                <p class="text-red-200 text-sm mb-6">⚠️ Las acciones en esta sección son IRREVERSIBLES. Úsalas únicamente para resetear la jornada y empezar de cero.</p>
+                <p class="text-red-200 text-sm mb-6">️ Las acciones en esta sección son IRREVERSIBLES. Úsalas únicamente para resetear la jornada y empezar de cero.</p>
 
                 <div class="space-y-6">
                     <div class="bg-red-950/50 border border-red-500/30 rounded-xl p-5">
@@ -261,10 +277,21 @@
         </section>
     </main>
 
+    <!-- Modal para editar selección inline -->
+    <div id="editModal" class="hidden-section fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+        <div class="glass-card rounded-2xl p-6 max-w-md w-full">
+            <h3 class="text-xl font-black uppercase gold-text mb-4">Cambiar Selección</h3>
+            <p class="text-amber-200/70 text-sm mb-4">Participante: <span id="editModalPlayer" class="text-amber-400 font-bold"></span></p>
+            <p class="text-amber-200/70 text-sm mb-4">Válida: <span id="editModalRace" class="text-amber-400 font-bold"></span></p>
+            <div id="editModalButtons" class="flex flex-wrap gap-2 justify-center mb-4"></div>
+            <button onclick="closeEditModal()" class="gold-btn w-full px-4 py-2 rounded-lg text-sm">Cerrar</button>
+        </div>
+    </div>
+
     <!-- JAVASCRIPT LOGIC CON FIREBASE INTEGRADO -->
     <script>
         // ==========================================
-        // PASO 2: CONFIGURACIÓN DE FIREBASE
+        // CONFIGURACIÓN DE FIREBASE
         // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyC0NNnkL85YXPBkQk4aNW3xxZ4dd408X5k",
@@ -282,7 +309,7 @@
         let currentPlayer = null;
         let playerEditing = null;
         let allPlayers = []; 
-        let appSettings = { betValue: 10 };
+        let appSettings = { betValue: 10, inscripcionesAbiertas: true };
         let raceConfig = {
             1: { count: 8, scratched: [] }, 2: { count: 10, scratched: [] },
             3: { count: 9, scratched: [] }, 4: { count: 12, scratched: [] },
@@ -295,15 +322,18 @@
         };
 
         // ==========================================
-        // PASO 3: ESCUCHAS EN TIEMPO REAL
+        // ESCUCHAS EN TIEMPO REAL
         // ==========================================
         function activarTiempoReal() {
             db.collection("players").onSnapshot((snapshot) => {
                 allPlayers = [];
                 snapshot.forEach(doc => { allPlayers.push(doc.data()); });
+                // Eliminar jugadores incompletos automáticamente
+                eliminarJugadoresIncompletos();
                 updateRankingTables(); 
                 generateWhatsappLog();
                 updateAdminAccounting();
+                renderEditPlayersTable();
             });
 
             for (let i = 1; i <= 6; i++) {
@@ -312,6 +342,7 @@
                         raceConfig[i] = doc.data();
                         renderRacesGrid(); 
                         renderAdminRacesConfig();
+                        renderScratchedButtons();
                     }
                 });
             }
@@ -329,6 +360,7 @@
                 if (doc.exists) {
                     appSettings = doc.data();
                     document.getElementById('betValue').value = appSettings.betValue || 10;
+                    updateInscripcionesUI();
                     calculatePrize();
                 }
             });
@@ -337,11 +369,41 @@
         // Inicializar al cargar
         document.addEventListener('DOMContentLoaded', () => {
             activarTiempoReal();
-            // Renderizados iniciales por si Firebase tarda un poco
+            renderRaceCountInputs();
+            renderScratchedButtons();
             renderRacesGrid();
             renderAdminRacesConfig();
             renderAdminResultsConfig();
         });
+
+        // ==========================================
+        // ELIMINAR JUGADORES INCOMPLETOS
+        // ==========================================
+        async function eliminarJugadoresIncompletos() {
+            const batch = db.batch();
+            let eliminados = 0;
+            
+            allPlayers.forEach(player => {
+                // Verificar si tiene las 6 válidas completas
+                let completas = true;
+                for (let i = 1; i <= 6; i++) {
+                    if (!player.picks || !player.picks[i]) {
+                        completas = false;
+                        break;
+                    }
+                }
+                
+                if (!completas) {
+                    batch.delete(db.collection("players").doc(player.name));
+                    eliminados++;
+                }
+            });
+            
+            if (eliminados > 0) {
+                await batch.commit();
+                console.log(`✅ Eliminados ${eliminados} jugadores incompletos`);
+            }
+        }
 
         // ==========================================
         // NAVEGACIÓN
@@ -350,7 +412,10 @@
             document.querySelectorAll('section').forEach(el => el.classList.add('hidden-section'));
             document.getElementById(`view-${viewName}`).classList.remove('hidden-section');
             if(viewName === 'ranking') updateRankingTables();
-            if(viewName === 'admin') generateWhatsappLog();
+            if(viewName === 'admin') {
+                generateWhatsappLog();
+                renderEditPlayersTable();
+            }
         }
 
         function showAdminTab(tabName) {
@@ -364,15 +429,26 @@
             activeBtn.classList.add('active-tab');
             if (tabName === 'roja') activeBtn.classList.add('text-red-400');
             else { activeBtn.classList.add('text-amber-400'); activeBtn.classList.remove('text-amber-200/60'); }
+            
+            if (tabName === 'editar') renderEditPlayersTable();
+            if (tabName === 'carreras') {
+                renderRaceCountInputs();
+                renderScratchedButtons();
+            }
         }
 
         // ==========================================
-        // PASO 4: REGISTRO DE JUGADORES (FIREBASE)
+        // REGISTRO DE JUGADORES
         // ==========================================
         async function registerPlayer() {
             const input = document.getElementById('playerName');
             let name = input.value.trim();
             if (!name) return alert("Por favor ingresa un nombre o apodo.");
+
+            // Verificar si inscripciones están cerradas
+            if (!appSettings.inscripcionesAbiertas) {
+                return alert("⚠️ Las inscripciones están CERRADAS. No se pueden registrar nuevos participantes.");
+            }
 
             let baseName = name;
             let counter = 1;
@@ -412,7 +488,7 @@
         }
 
         // ==========================================
-        // PASO 5: SELECCIÓN DE CABALLOS (FIREBASE)
+        // SELECCIÓN DE CABALLOS
         // ==========================================
         async function selectHorse(race, horse, btnElement) {
             const raceButtons = document.querySelectorAll(`#buttons-race-${race} .horse-btn`);
@@ -441,26 +517,37 @@
             }, 100);
         }
 
-        function submitPredictions() {
+        // OBSERVACIÓN 2: Después de enviar, volver a INICIO con casilla vacía
+        async function submitPredictions() {
             if (!currentPlayer) return;
             const player = allPlayers.find(p => p.name === currentPlayer);
             for (let i = 1; i <= 6; i++) {
                 if (!player.picks[i]) return alert(`Por favor selecciona un ejemplar para la ${i}ª Válida.`);
             }
             alert(`¡Jugada enviada con éxito para ${currentPlayer}!`);
-            showView('ranking');
+            
+            // Limpiar todo y volver a inicio
+            currentPlayer = null;
+            document.getElementById('playerName').value = '';
+            document.getElementById('nameSuggestion').classList.add('hidden');
+            document.getElementById('raceSelectionBlock').classList.add('hidden-section');
+            showView('main');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // ==========================================
-        // RENDERIZADO DE CARRERAS
+        // RENDERIZADO DE CARRERAS (VISTA USUARIO)
+        // OBSERVACIÓN 7: Caballos retirados no aparecen
         // ==========================================
         function renderRacesGrid() {
             const grid = document.getElementById('racesGrid');
+            if (!grid) return;
             grid.innerHTML = '';
             for (let i = 1; i <= 6; i++) {
                 const race = raceConfig[i];
                 let buttonsHtml = '';
                 for (let j = 1; j <= race.count; j++) {
+                    // OBSERVACIÓN 7: No mostrar caballos retirados
                     if (!race.scratched.includes(j)) {
                         buttonsHtml += `<button type="button" id="btn-race-${i}-horse-${j}" onclick="selectHorse(${i}, ${j}, this)" class="horse-btn w-10 h-10 rounded-lg border border-amber-500/30 bg-emerald-900/50 text-amber-400 font-bold text-sm flex items-center justify-center">${j}</button>`;
                     }
@@ -470,52 +557,305 @@
         }
 
         // ==========================================
-        // PASO 6: GUARDAR CONFIGURACIÓN CARRERAS
+        // OBSERVACIÓN 7: CONFIGURACIÓN DE CARRERAS SEPARADA
         // ==========================================
-        function renderAdminRacesConfig() {
-            const container = document.getElementById('adminRacesConfig');
+        function renderRaceCountInputs() {
+            const container = document.getElementById('raceCountInputs');
+            if (!container) return;
+            container.innerHTML = '';
+            for (let i = 1; i <= 6; i++) {
+                container.innerHTML += `
+                    <div class="bg-emerald-950/50 border border-amber-500/20 rounded-lg p-3">
+                        <label class="text-amber-400 font-bold text-sm block mb-2">${i}ª Válida</label>
+                        <input type="number" id="race-count-input-${i}" value="${raceConfig[i].count}" min="4" max="16" 
+                            class="input-luxury w-full rounded px-3 py-2 text-center font-bold text-lg">
+                        <span class="text-amber-200/60 text-xs block text-center mt-1">ejemplares</span>
+                    </div>
+                `;
+            }
+        }
+
+        async function saveRaceCounts() {
+            const batch = db.batch();
+            for (let i = 1; i <= 6; i++) {
+                const newCount = parseInt(document.getElementById(`race-count-input-${i}`).value);
+                if (newCount >= 4 && newCount <= 16) {
+                    raceConfig[i].count = newCount;
+                    raceConfig[i].scratched = []; // Resetear retirados al cambiar cantidad
+                    batch.set(db.collection("races").doc(i.toString()), raceConfig[i]);
+                }
+            }
+            await batch.commit();
+            renderScratchedButtons();
+            alert("✅ Cantidades de ejemplares actualizadas.");
+        }
+
+        // OBSERVACIÓN 7: Botones separados para retirados
+        function renderScratchedButtons() {
+            const container = document.getElementById('scratchedButtonsContainer');
+            if (!container) return;
             container.innerHTML = '';
             for (let i = 1; i <= 6; i++) {
                 const race = raceConfig[i];
-                let scratchedChecks = '';
+                let buttonsHtml = '';
                 for (let j = 1; j <= race.count; j++) {
-                    const isScratched = race.scratched.includes(j) ? 'checked' : '';
-                    scratchedChecks += `<label class="inline-flex items-center mr-3 mb-2 cursor-pointer"><input type="checkbox" class="form-checkbox text-amber-500 rounded bg-emerald-950 border-amber-500/50" onchange="toggleScratch(${i}, ${j}, this.checked)" ${isScratched}><span class="ml-2 text-amber-100 text-sm">#${j}</span></label>`;
+                    const isScratched = race.scratched.includes(j);
+                    const btnClass = isScratched ? 'bg-red-600 border-red-400 text-white' : 'bg-emerald-900/50 border-amber-500/30 text-amber-400';
+                    buttonsHtml += `<button onclick="toggleScratchButton(${i}, ${j})" id="scratch-btn-${i}-${j}" class="horse-btn w-10 h-10 rounded-lg border ${btnClass} font-bold text-sm flex items-center justify-center">${j}</button>`;
                 }
-                container.innerHTML += `<div class="border border-amber-500/20 rounded-lg p-4 bg-emerald-950/30"><div class="flex items-center gap-4 mb-3"><label class="text-amber-400 font-bold w-32">${i}ª Válida:</label><input type="number" id="race-count-${i}" value="${race.count}" min="4" max="16" class="input-luxury w-20 rounded px-2 py-1 text-center" onchange="updateRaceCount(${i}, this.value)"><span class="text-amber-200/60 text-sm">ejemplares</span></div><div class="pl-32"><p class="text-amber-400 text-xs font-bold uppercase mb-2">Marcar Retirados:</p><div class="flex flex-wrap">${scratchedChecks}</div></div></div>`;
+                container.innerHTML += `
+                    <div class="bg-emerald-950/30 border border-amber-500/20 rounded-lg p-4">
+                        <h5 class="font-black uppercase text-amber-400 mb-3 text-sm">${i}ª Válida - Retirados (rojo = retirado)</h5>
+                        <div class="flex flex-wrap gap-2" id="scratch-buttons-race-${i}">
+                            ${buttonsHtml}
+                        </div>
+                    </div>
+                `;
             }
         }
 
-        function updateRaceCount(race, count) {
-            raceConfig[race].count = parseInt(count);
-            raceConfig[race].scratched = []; 
-            renderAdminRacesConfig();
-            renderRacesGrid(); 
-        }
-
-        function toggleScratch(race, horse, isChecked) {
-            if (isChecked) {
-                if (!raceConfig[race].scratched.includes(horse)) raceConfig[race].scratched.push(horse);
+        function toggleScratchButton(race, horse) {
+            const idx = raceConfig[race].scratched.indexOf(horse);
+            if (idx > -1) {
+                raceConfig[race].scratched.splice(idx, 1);
             } else {
-                raceConfig[race].scratched = raceConfig[race].scratched.filter(h => h !== horse);
+                raceConfig[race].scratched.push(horse);
             }
-            renderRacesGrid(); 
+            renderScratchedButtons();
         }
 
-        async function saveRaceConfig() {
+        async function saveScratchedConfig() {
             const batch = db.batch();
             for (let i = 1; i <= 6; i++) {
                 batch.set(db.collection("races").doc(i.toString()), raceConfig[i]);
             }
             await batch.commit();
-            alert("✅ Configuración de carreras guardada en la nube.");
+            alert("✅ Retirados guardados. Los caballos marcados NO aparecerán en la selección del usuario.");
         }
 
         // ==========================================
-        // PASO 7: PROCESAR RESULTADOS Y PUNTUAR
+        // OBSERVACIÓN 3: CONTROL DE INSCRIPCIONES
+        // ==========================================
+        async function toggleInscripciones() {
+            const nuevoEstado = !appSettings.inscripcionesAbiertas;
+            await db.collection("settings").doc("general").set({ 
+                ...appSettings, 
+                inscripcionesAbiertas: nuevoEstado 
+            }, { merge: true });
+        }
+
+        function updateInscripcionesUI() {
+            const statusEl = document.getElementById('inscripcionesStatus');
+            const btnEl = document.getElementById('btnToggleInscripciones');
+            if (statusEl && btnEl) {
+                if (appSettings.inscripcionesAbiertas) {
+                    statusEl.textContent = 'ABIERTAS';
+                    statusEl.className = 'text-green-400';
+                    btnEl.innerHTML = '<i class="fa-solid fa-lock mr-2"></i> CERRAR INSCRIPCIONES';
+                } else {
+                    statusEl.textContent = 'CERRADAS';
+                    statusEl.className = 'text-red-400';
+                    btnEl.innerHTML = '<i class="fa-solid fa-lock-open mr-2"></i> ABRIR INSCRIPCIONES';
+                }
+            }
+            const validCount = document.getElementById('validPlayersCount');
+            if (validCount) validCount.textContent = allPlayers.length;
+        }
+
+        // ==========================================
+        // OBSERVACIÓN 3 y 6: TABLAS DE RANKING DINÁMICAS
+        // ==========================================
+        function updateRankingTables() {
+            const container = document.getElementById('rankingTablesContainer');
+            if (!container) return;
+            
+            const sortedPlayers = [...allPlayers].sort((a, b) => b.total - a.total);
+            const inscripcionesCerradas = !appSettings.inscripcionesAbiertas;
+            
+            // Calcular premio actual
+            const totalRecaudado = allPlayers.length * (appSettings.betValue || 10);
+            const premioActual = (totalRecaudado * 0.80).toFixed(2);
+            
+            let html = '';
+            
+            // OBSERVACIÓN 3: Si inscripciones cerradas, PUNTAJE GENERAL arriba
+            if (inscripcionesCerradas) {
+                html += renderPuntajeGeneralTable(sortedPlayers);
+                html += renderPollasJugadasTable(allPlayers, premioActual);
+            } else {
+                // OBSERVACIÓN 3: Si inscripciones abiertas, solo Pollas Jugadas
+                html += renderPollasJugadasTable(allPlayers, premioActual);
+            }
+            
+            container.innerHTML = html;
+        }
+
+        // OBSERVACIÓN 6: TABLA DE POLLAS JUGADAS (antes Transparencia)
+        function renderPollasJugadasTable(players, premioActual) {
+            let html = `
+                <div class="glass-card rounded-2xl p-6 overflow-x-auto">
+                    <h3 class="text-lg font-black uppercase mb-2 text-amber-400 border-b border-amber-500/30 pb-2">
+                        <i class="fa-solid fa-ticket mr-2"></i> Pollas Jugadas
+                    </h3>
+                    <div class="prize-display rounded-lg p-4 mb-4 text-center">
+                        <p class="text-amber-200/70 text-sm uppercase font-bold">Premio Acumulado</p>
+                        <p class="text-3xl font-black text-amber-400">$ ${premioActual}</p>
+                        <p class="text-amber-200/60 text-xs mt-1">${players.length} participantes × $${appSettings.betValue || 10} × 80%</p>
+                    </div>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="text-amber-400 text-sm uppercase border-b border-amber-500/30">
+                                <th class="p-3">Nombre</th>
+                                <th class="p-3 text-center">1V</th><th class="p-3 text-center">2V</th><th class="p-3 text-center">3V</th>
+                                <th class="p-3 text-center">4V</th><th class="p-3 text-center">5V</th><th class="p-3 text-center">6V</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-amber-100 text-sm">
+            `;
+            
+            players.forEach(p => {
+                html += `<tr class="border-b border-amber-500/10 hover:bg-amber-500/5 transition-colors">
+                    <td class="p-3 font-bold text-amber-400">${p.name}</td>
+                    <td class="p-3 text-center">${p.picks[1] || '-'}</td><td class="p-3 text-center">${p.picks[2] || '-'}</td>
+                    <td class="p-3 text-center">${p.picks[3] || '-'}</td><td class="p-3 text-center">${p.picks[4] || '-'}</td>
+                    <td class="p-3 text-center">${p.picks[5] || '-'}</td><td class="p-3 text-center">${p.picks[6] || '-'}</td>
+                </tr>`;
+            });
+            
+            html += `</tbody></table></div>`;
+            return html;
+        }
+
+        // OBSERVACIÓN 3: TABLA DE PUNTAJE GENERAL (antes Ranking General)
+        function renderPuntajeGeneralTable(sortedPlayers) {
+            let html = `
+                <div class="glass-card rounded-2xl p-6 overflow-x-auto">
+                    <h3 class="text-lg font-black uppercase mb-4 text-amber-400 border-b border-amber-500/30 pb-2">
+                        <i class="fa-solid fa-trophy mr-2"></i> Puntaje General
+                    </h3>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="text-amber-400 text-sm uppercase border-b border-amber-500/30">
+                                <th class="p-3">Nombre</th>
+                                <th class="p-3 text-center">1V</th><th class="p-3 text-center">Pts</th>
+                                <th class="p-3 text-center">2V</th><th class="p-3 text-center">Pts</th>
+                                <th class="p-3 text-center">3V</th><th class="p-3 text-center">Pts</th>
+                                <th class="p-3 text-center">4V</th><th class="p-3 text-center">Pts</th>
+                                <th class="p-3 text-center">5V</th><th class="p-3 text-center">Pts</th>
+                                <th class="p-3 text-center">6V</th><th class="p-3 text-center">Pts</th>
+                                <th class="p-3 text-center font-black text-amber-400">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-amber-100 text-sm">
+            `;
+            
+            sortedPlayers.forEach((p, index) => {
+                const isTop3 = index < 3 ? 'bg-amber-500/10 font-bold text-amber-400' : '';
+                html += `<tr class="border-b border-amber-500/10 hover:bg-amber-500/5 transition-colors ${isTop3}">
+                    <td class="p-3">${index + 1}. ${p.name}</td>
+                    <td class="p-3 text-center">${p.picks[1] || '-'}</td><td class="p-3 text-center text-amber-200">${p.scores[1]||0}</td>
+                    <td class="p-3 text-center">${p.picks[2] || '-'}</td><td class="p-3 text-center text-amber-200">${p.scores[2]||0}</td>
+                    <td class="p-3 text-center">${p.picks[3] || '-'}</td><td class="p-3 text-center text-amber-200">${p.scores[3]||0}</td>
+                    <td class="p-3 text-center">${p.picks[4] || '-'}</td><td class="p-3 text-center text-amber-200">${p.scores[4]||0}</td>
+                    <td class="p-3 text-center">${p.picks[5] || '-'}</td><td class="p-3 text-center text-amber-200">${p.scores[5]||0}</td>
+                    <td class="p-3 text-center">${p.picks[6] || '-'}</td><td class="p-3 text-center text-amber-200">${p.scores[6]||0}</td>
+                    <td class="p-3 text-center font-black text-amber-400 text-lg">${p.total}</td>
+                </tr>`;
+            });
+            
+            html += `</tbody></table></div>`;
+            return html;
+        }
+
+        // ==========================================
+        // OBSERVACIÓN 4: EDITAR JUGADA - TABLA COMPLETA
+        // ==========================================
+        function renderEditPlayersTable() {
+            const tbody = document.getElementById('editPlayersTableBody');
+            if (!tbody) return;
+            
+            const sortedPlayers = [...allPlayers].sort((a, b) => a.name.localeCompare(b.name));
+            
+            if (sortedPlayers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-amber-200/70">No hay participantes registrados</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = '';
+            sortedPlayers.forEach(player => {
+                let row = `<tr class="border-b border-amber-500/10 hover:bg-amber-500/5 transition-colors">
+                    <td class="p-3 font-bold text-amber-400">${player.name}</td>`;
+                
+                for (let i = 1; i <= 6; i++) {
+                    const pick = player.picks[i] || '-';
+                    row += `<td class="p-3 text-center">
+                        <button onclick="openEditModal('${player.name}', ${i})" 
+                            class="horse-btn w-8 h-8 rounded border border-amber-500/30 bg-emerald-900/50 text-amber-400 font-bold text-xs hover:bg-amber-500/20">
+                            ${pick}
+                        </button>
+                    </td>`;
+                }
+                
+                row += `<td class="p-3 text-center">
+                    <button onclick="deletePlayer('${player.name}')" class="text-red-400 hover:text-red-300 text-xs">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </td></tr>`;
+                
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Modal para editar selección
+        let editModalData = { player: null, race: null };
+
+        function openEditModal(playerName, race) {
+            editModalData = { player: playerName, race: race };
+            document.getElementById('editModalPlayer').textContent = playerName;
+            document.getElementById('editModalRace').textContent = race + 'ª Válida';
+            
+            const container = document.getElementById('editModalButtons');
+            container.innerHTML = '';
+            
+            const raceConfig_data = raceConfig[race];
+            for (let j = 1; j <= raceConfig_data.count; j++) {
+                if (!raceConfig_data.scratched.includes(j)) {
+                    const player = allPlayers.find(p => p.name === playerName);
+                    const isSelected = player && player.picks[race] == j;
+                    const btnClass = isSelected ? 'selected' : '';
+                    container.innerHTML += `<button onclick="saveEditSelection(${j})" class="horse-btn w-10 h-10 rounded-lg border border-amber-500/30 bg-emerald-900/50 text-amber-400 font-bold text-sm flex items-center justify-center ${btnClass}">${j}</button>`;
+                }
+            }
+            
+            document.getElementById('editModal').classList.remove('hidden-section');
+        }
+
+        async function saveEditSelection(horse) {
+            const { player, race } = editModalData;
+            await db.collection("players").doc(player).update({
+                [`picks.${race}`]: horse
+            });
+            closeEditModal();
+            alert(`✅ Selección actualizada para ${player} en ${race}ª Válida`);
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden-section');
+            editModalData = { player: null, race: null };
+        }
+
+        async function deletePlayer(playerName) {
+            if (!confirm(`¿Eliminar a ${playerName} de la base de datos?`)) return;
+            await db.collection("players").doc(playerName).delete();
+            alert(`✅ ${playerName} eliminado.`);
+        }
+
+        // ==========================================
+        // RESULTADOS Y PUNTUACIÓN
         // ==========================================
         function renderAdminResultsConfig() {
             const container = document.getElementById('adminResultsConfig');
+            if (!container) return;
             container.innerHTML = '';
             for (let i = 1; i <= 6; i++) {
                 const res = resultsConfig[i];
@@ -586,80 +926,11 @@
         }
 
         // ==========================================
-        // TABLAS DE RANKING
-        // ==========================================
-        function updateRankingTables() {
-            const sortedPlayers = [...allPlayers].sort((a, b) => b.total - a.total);
-
-            const transBody = document.getElementById('transparencyTableBody');
-            if (transBody) {
-                transBody.innerHTML = '';
-                allPlayers.forEach(p => {
-                    transBody.innerHTML += `<tr class="border-b border-amber-500/10 hover:bg-amber-500/5 transition-colors"><td class="p-3 font-bold text-amber-400">${p.name}</td><td class="p-3 text-center">${p.picks[1] || '-'}</td><td class="p-3 text-center">${p.picks[2] || '-'}</td><td class="p-3 text-center">${p.picks[3] || '-'}</td><td class="p-3 text-center">${p.picks[4] || '-'}</td><td class="p-3 text-center">${p.picks[5] || '-'}</td><td class="p-3 text-center">${p.picks[6] || '-'}</td></tr>`;
-                });
-            }
-
-            const rankBody = document.getElementById('rankingTableBody');
-            if (rankBody) {
-                rankBody.innerHTML = '';
-                sortedPlayers.forEach((p, index) => {
-                    const isTop3 = index < 3 ? 'bg-amber-500/10 font-bold text-amber-400' : '';
-                    rankBody.innerHTML += `<tr class="border-b border-amber-500/10 hover:bg-amber-500/5 transition-colors ${isTop3}"><td class="p-3">${index + 1}. ${p.name}</td><td class="p-3 text-center">${p.picks[1] || '-'}</td><td class="p-3 text-center text-amber-200">${p.scores[1]||0}</td><td class="p-3 text-center">${p.picks[2] || '-'}</td><td class="p-3 text-center text-amber-200">${p.scores[2]||0}</td><td class="p-3 text-center">${p.picks[3] || '-'}</td><td class="p-3 text-center text-amber-200">${p.scores[3]||0}</td><td class="p-3 text-center">${p.picks[4] || '-'}</td><td class="p-3 text-center text-amber-200">${p.scores[4]||0}</td><td class="p-3 text-center">${p.picks[5] || '-'}</td><td class="p-3 text-center text-amber-200">${p.scores[5]||0}</td><td class="p-3 text-center">${p.picks[6] || '-'}</td><td class="p-3 text-center text-amber-200">${p.scores[6]||0}</td><td class="p-3 text-center font-black text-amber-400 text-lg">${p.total}</td></tr>`;
-                });
-            }
-        }
-
-        // ==========================================
-        // EDITAR JUGADA
-        // ==========================================
-        function searchPlayerToEdit() {
-            const name = document.getElementById('editSearchName').value.trim();
-            playerEditing = allPlayers.find(p => p.name.toLowerCase() === name.toLowerCase());
-            
-            if (playerEditing) {
-                document.getElementById('editPlayerForm').classList.remove('hidden-section');
-                document.getElementById('editingPlayerName').textContent = playerEditing.name;
-                const grid = document.getElementById('editRacesGrid');
-                grid.innerHTML = '';
-                for (let i = 1; i <= 6; i++) {
-                    const race = raceConfig[i];
-                    let buttonsHtml = '';
-                    for (let j = 1; j <= race.count; j++) {
-                        if (!race.scratched.includes(j)) {
-                            const isSelected = playerEditing.picks[i] == j;
-                            const activeClasses = isSelected ? 'selected' : '';
-                            buttonsHtml += `<button type="button" id="edit-btn-race-${i}-horse-${j}" onclick="selectEditHorse(${i}, ${j}, this)" class="horse-btn w-10 h-10 rounded-lg border border-amber-500/30 bg-emerald-900/50 text-amber-400 font-bold text-sm flex items-center justify-center ${activeClasses}">${j}</button>`;
-                        }
-                    }
-                    grid.innerHTML += `<div class="bg-emerald-950/30 border border-amber-500/20 rounded-lg p-3"><label class="text-amber-400 text-xs font-black uppercase block mb-2 text-center">${i}ª Válida</label><div class="flex flex-wrap gap-2 justify-center" id="edit-buttons-race-${i}">${buttonsHtml}</div></div>`;
-                }
-            } else {
-                alert("Jugador no encontrado.");
-                document.getElementById('editPlayerForm').classList.add('hidden-section');
-            }
-        }
-
-        function selectEditHorse(race, horse, btnElement) {
-            const raceButtons = document.querySelectorAll(`#edit-buttons-race-${race} .horse-btn`);
-            raceButtons.forEach(btn => btn.classList.remove('selected'));
-            btnElement.classList.add('selected');
-            if (playerEditing) playerEditing.picks[race] = horse;
-        }
-
-        async function saveEditedPrediction() {
-            if (!playerEditing) return;
-            await db.collection("players").doc(playerEditing.name).update({ picks: playerEditing.picks });
-            alert("✅ Jugada actualizada en Firebase.");
-            document.getElementById('editPlayerForm').classList.add('hidden-section');
-            document.getElementById('editSearchName').value = '';
-        }
-
-        // ==========================================
         // PDF Y WHATSAPP
         // ==========================================
         function generateWhatsappLog() {
             const sortedPlayers = [...allPlayers].sort((a, b) => b.total - a.total);
-            let log = "🏆 *Polla Hípica - Ranking* 🏆\nNOMBRE|1V|P|2V|P|3V|P|4V|P|5V|P|6V|P|Tot|\n-----------------------------------\n";
+            let log = " *Polla Hípica - Ranking* \nNOMBRE|1V|P|2V|P|3V|P|4V|P|5V|P|6V|P|Tot|\n-----------------------------------\n";
             sortedPlayers.forEach(p => {
                 log += `${p.name.substring(0, 10).padEnd(10, ' ')}|${(p.picks[1]||'-').toString().padEnd(2, ' ')}|${p.scores[1]||0}|${(p.picks[2]||'-').toString().padEnd(2, ' ')}|${p.scores[2]||0}|${(p.picks[3]||'-').toString().padEnd(2, ' ')}|${p.scores[3]||0}|${(p.picks[4]||'-').toString().padEnd(2, ' ')}|${p.scores[4]||0}|${(p.picks[5]||'-').toString().padEnd(2, ' ')}|${p.scores[5]||0}|${(p.picks[6]||'-').toString().padEnd(2, ' ')}|${p.scores[6]||0}|${p.total.toString().padEnd(3, ' ')}\n`;
             });
@@ -692,12 +963,13 @@
             const prizeEl = document.getElementById('prizePool');
             if (totalEl) totalEl.value = `$ ${total.toFixed(2)}`;
             if (prizeEl) prizeEl.value = `$ ${(total * 0.80).toFixed(2)}`;
+            updateInscripcionesUI();
         }
 
         function calculatePrize() { updateAdminAccounting(); }
 
         // ==========================================
-        // PASO 8: ZONA ROJA (FIREBASE)
+        // ZONA ROJA
         // ==========================================
         async function resetAllPlayers() {
             if (!confirm("⚠️ ¿Borrar TODOS los participantes de la base de datos?")) return;
@@ -736,6 +1008,7 @@
             await batch1.commit();
             const batch2 = db.batch();
             for (let i = 1; i <= 6; i++) { batch2.set(db.collection("results").doc(i.toString()), { first: "", second: "", third: "" }); raceConfig[i].scratched = []; batch2.set(db.collection("races").doc(i.toString()), raceConfig[i]); }
+            await db.collection("settings").doc("general").set({ betValue: 10, inscripcionesAbiertas: true });
             await batch2.commit();
             alert("🎉 JORNADA RESETADA COMPLETAMENTE EN FIREBASE.");
         }
