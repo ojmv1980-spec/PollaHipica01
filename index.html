@@ -24,33 +24,205 @@
         }
     </script>
     <style>
-        body { background-color: #022c22; background-image: radial-gradient(circle at 50% 0%, #064e3b 0%, #022c22 70%); color: #fbbf24; }
-        .glass-card { background: rgba(6, 78, 59, 0.4); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(251, 191, 36, 0.2); box-shadow: 0 8px 32px 0 rgba(251, 191, 36, 0.1); }
-        .gold-btn { background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); color: #022c22; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.3s ease; }
-        .gold-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(251, 191, 36, 0.4); }
-        .gold-text { color: #fbbf24; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        .input-luxury { background: rgba(2, 44, 34, 0.8); border: 1px solid rgba(251, 191, 36, 0.3); color: #fbbf24; }
-        .input-luxury:focus { outline: none; border-color: #fbbf24; box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.2); }
-        .horse-btn { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-        .horse-btn:hover:not(.selected) { background-color: rgba(251, 191, 36, 0.15); transform: scale(1.05); }
-        .horse-btn.selected { background-color: #fbbf24; border-color: #fbbf24; color: #022c22; font-weight: 900; box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4); transform: scale(1.1); }
+        /* FONDO TEMÁTICO HIPÓDROMO CON GRADIENTE VIBRANTE */
+        body {
+            background: linear-gradient(135deg, #022c22 0%, #064e3b 25%, #065f46 50%, #022c22 75%, #011a14 100%);
+            background-attachment: fixed;
+            color: #fbbf24;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* GLASSMORPHISM ULTRA TRANSPARENTE */
+        .glass-card {
+            background: rgba(6, 78, 59, 0.08);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(251, 191, 36, 0.15);
+            box-shadow: 0 8px 32px 0 rgba(251, 191, 36, 0.08);
+        }
+
+        .glass-card:hover {
+            background: rgba(6, 78, 59, 0.12);
+            border-color: rgba(251, 191, 36, 0.25);
+        }
+
+        /* BOTONES DORADOS CON EFECTO PREMIUM */
+        .gold-btn {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+            color: #022c22;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+        }
+
+        .gold-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.5);
+            filter: brightness(1.1);
+        }
+
+        .gold-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .gold-text {
+            color: #fbbf24;
+            text-shadow: 0 2px 10px rgba(251, 191, 36, 0.3);
+            font-weight: 900;
+            letter-spacing: 0.05em;
+        }
+
+        /* INPUTS ULTRA TRANSPARENTES */
+        .input-luxury {
+            background: rgba(2, 44, 34, 0.3);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .input-luxury:focus {
+            background: rgba(2, 44, 34, 0.5);
+            border-color: #fbbf24;
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
+            outline: none;
+        }
+
+        .input-luxury::placeholder {
+            color: rgba(251, 191, 36, 0.4);
+        }
+
+        /* BOTONES DE CABALLOS */
+        .horse-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(6, 78, 59, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .horse-btn:hover:not(.selected) {
+            background: rgba(251, 191, 36, 0.2);
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
+        }
+
+        .horse-btn.selected {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            border-color: #fbbf24;
+            color: #022c22;
+            font-weight: 900;
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+            transform: scale(1.15);
+        }
+
+        /* HEADER ULTRA TRANSLÚCIDO */
+        header {
+            background: rgba(2, 44, 34, 0.6);
+            backdrop-filter: blur(30px) saturate(200%);
+            -webkit-backdrop-filter: blur(30px) saturate(200%);
+        }
+
+        /* TABS */
+        .active-tab {
+            border-bottom: 2px solid #fbbf24;
+            color: #fbbf24;
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+        }
+
+        /* SCROLLBAR PERSONALIZADO */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(2, 44, 34, 0.3); }
+        ::-webkit-scrollbar-thumb { 
+            background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+            border-radius: 4px;
+        }
+
+        /* UTILIDADES */
         .hidden-section { display: none; }
-        .active-tab { border-bottom: 2px solid #fbbf24; color: #fbbf24; }
+
+        /* ANIMACIONES */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glass-card {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* EFECTOS DE HOVER EN FILAS DE TABLA */
+        table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        table tbody tr:hover {
+            background: rgba(251, 191, 36, 0.1);
+            transform: scale(1.01);
+        }
+
+        /* ZONA ROJA */
+        .danger-zone {
+            background: rgba(127, 29, 29, 0.15);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(220, 38, 38, 0.4);
+        }
+
+        .danger-btn {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: #fff;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(252, 165, 165, 0.3);
+        }
+
+        .danger-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(220, 38, 38, 0.4);
+            border-color: rgba(252, 165, 165, 0.6);
+        }
+
+        /* EFECTO BRILLO EN TÍTULOS */
+        h1, h2, h3, h4 {
+            position: relative;
+        }
+
+        h1::after, h2::after, h3::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #fbbf24, transparent);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .glass-card {
+                background: rgba(6, 78, 59, 0.15);
+            }
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
 </head>
 <body class="font-sans min-h-screen flex flex-col">
 
-    <header class="sticky top-0 z-50 glass-card border-b border-amber-500/30">
+    <header class="sticky top-0 z-50 border-b border-amber-500/20">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <i class="fa-solid fa-horse-head text-3xl text-amber-400"></i>
                 <h1 class="text-2xl md:text-3xl font-black uppercase tracking-wider gold-text">Polla Hípica</h1>
             </div>
             <nav class="flex gap-4 md:gap-6">
-                <button onclick="showView('main')" class="font-bold uppercase text-sm hover:text-amber-300">Inicio</button>
-                <button onclick="showView('ranking')" class="font-bold uppercase text-sm hover:text-amber-300">Ranking</button>
-                <button onclick="showView('admin')" class="font-bold uppercase text-sm text-amber-400 border border-amber-500/50 px-3 py-1 rounded">Admin</button>
+                <button onclick="showView('main')" class="font-bold uppercase text-sm hover:text-amber-300 transition-colors">Inicio</button>
+                <button onclick="showView('ranking')" class="font-bold uppercase text-sm hover:text-amber-300 transition-colors">Ranking</button>
+                <button onclick="showView('admin')" class="font-bold uppercase text-sm text-amber-400 border border-amber-500/50 px-3 py-1 rounded hover:bg-amber-500/10 transition-colors">
+                    <i class="fa-solid fa-lock mr-1"></i> Admin
+                </button>
             </nav>
         </div>
     </header>
@@ -61,7 +233,7 @@
             <div class="glass-card rounded-2xl p-8 max-w-2xl mx-auto text-center">
                 <h2 class="text-2xl font-black uppercase mb-6 gold-text">Ingresa a la Jugada</h2>
                 <div class="flex flex-col md:flex-row gap-4 items-center justify-center">
-                    <input type="text" id="playerName" placeholder="Tu Nombre o Apodo" class="input-luxury rounded-lg px-4 py-3 w-full md:w-80 text-lg">
+                    <input type="text" id="playerName" placeholder="Tu Nombre o Apodo" class="input-luxury rounded-lg px-4 py-3 w-full md:w-80 text-lg font-semibold">
                     <button onclick="registerPlayer()" class="gold-btn px-8 py-3 rounded-lg">PARTICIPAR</button>
                 </div>
                 <p id="nameSuggestion" class="text-amber-400 text-sm mt-3 hidden"></p>
@@ -145,11 +317,11 @@
                     </div>
                     <div>
                         <label class="block text-amber-400 text-sm font-bold mb-2">Total Recaudado (Simulado)</label>
-                        <input type="text" id="totalCollected" class="input-luxury w-full rounded-lg px-4 py-2 bg-emerald-950" readonly>
+                        <input type="text" id="totalCollected" class="input-luxury w-full rounded-lg px-4 py-2" readonly>
                     </div>
                     <div>
                         <label class="block text-amber-400 text-sm font-bold mb-2">Premio (80%)</label>
-                        <input type="text" id="prizePool" class="input-luxury w-full rounded-lg px-4 py-2 bg-emerald-800 font-black text-amber-400" readonly>
+                        <input type="text" id="prizePool" class="input-luxury w-full rounded-lg px-4 py-2 font-black text-amber-400" readonly>
                     </div>
                 </div>
             </div>
@@ -190,7 +362,6 @@
     </main>
 
     <script>
-        // FIREBASE CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyC0NNnkL85YXPBkQk4aNW3xxZ4dd408X5k",
             authDomain: "polla-hipica-prueba.firebaseapp.com",
@@ -307,10 +478,10 @@
                 let buttonsHtml = '';
                 for (let j = 1; j <= race.count; j++) {
                     if (!race.scratched.includes(j)) {
-                        buttonsHtml += `<button type="button" id="btn-race-${i}-horse-${j}" onclick="selectHorse(${i}, ${j}, this)" class="horse-btn w-10 h-10 rounded-lg border border-amber-500/30 bg-emerald-900/50 text-amber-400 font-bold text-sm">${j}</button>`;
+                        buttonsHtml += `<button type="button" id="btn-race-${i}-horse-${j}" onclick="selectHorse(${i}, ${j}, this)" class="horse-btn w-10 h-10 rounded-lg border border-amber-500/30 text-amber-400 font-bold text-sm">${j}</button>`;
                     }
                 }
-                grid.innerHTML += `<div class="bg-emerald-950/50 border border-amber-500/20 rounded-xl p-4"><h4 class="font-black uppercase text-amber-400 mb-3 text-center">${i}ª Válida</h4><div class="flex flex-wrap gap-2 justify-center">${buttonsHtml}</div></div>`;
+                grid.innerHTML += `<div class="bg-emerald-950/30 border border-amber-500/20 rounded-xl p-4"><h4 class="font-black uppercase text-amber-400 mb-3 text-center">${i}ª Válida</h4><div class="flex flex-wrap gap-2 justify-center">${buttonsHtml}</div></div>`;
             }
         }
 
@@ -354,7 +525,7 @@
                     const isScratched = race.scratched.includes(j) ? 'checked' : '';
                     scratchedChecks += `<label class="inline-flex items-center mr-3 mb-2 cursor-pointer"><input type="checkbox" class="form-checkbox text-amber-500" onchange="toggleScratch(${i}, ${j}, this.checked)" ${isScratched}><span class="ml-2 text-amber-100 text-sm">#${j}</span></label>`;
                 }
-                container.innerHTML += `<div class="border border-amber-500/20 rounded-lg p-4 bg-emerald-950/30"><div class="flex items-center gap-4 mb-3"><label class="text-amber-400 font-bold w-32">${i}ª Válida:</label><input type="number" value="${race.count}" min="4" max="16" class="input-luxury w-20 rounded px-2 py-1 text-center" onchange="updateRaceCount(${i}, this.value)"><span class="text-amber-200/60 text-sm">ejemplares</span></div><div class="pl-32"><p class="text-amber-400 text-xs font-bold uppercase mb-2">Retirados:</p><div class="flex flex-wrap">${scratchedChecks}</div></div></div>`;
+                container.innerHTML += `<div class="border border-amber-500/20 rounded-lg p-4 bg-emerald-950/20"><div class="flex items-center gap-4 mb-3"><label class="text-amber-400 font-bold w-32">${i}ª Válida:</label><input type="number" value="${race.count}" min="4" max="16" class="input-luxury w-20 rounded px-2 py-1 text-center" onchange="updateRaceCount(${i}, this.value)"><span class="text-amber-200/60 text-sm">ejemplares</span></div><div class="pl-32"><p class="text-amber-400 text-xs font-bold uppercase mb-2">Retirados:</p><div class="flex flex-wrap">${scratchedChecks}</div></div></div>`;
             }
         }
 
@@ -390,7 +561,7 @@
             container.innerHTML = '';
             for (let i = 1; i <= 6; i++) {
                 const res = resultsConfig[i];
-                container.innerHTML += `<div class="border border-amber-500/20 rounded-lg p-4 bg-emerald-950/30"><h4 class="font-black uppercase text-amber-400 mb-3 text-center">${i}ª Válida</h4><div class="space-y-3"><div><label class="text-amber-200 text-xs uppercase font-bold block mb-1">1er</label><input type="text" id="res-${i}-1" value="${res.first}" placeholder="3 o 3,5" class="input-luxury w-full rounded px-3 py-2 text-center font-bold"></div><div><label class="text-amber-200 text-xs uppercase font-bold block mb-1">2do</label><input type="text" id="res-${i}-2" value="${res.second}" placeholder="7" class="input-luxury w-full rounded px-3 py-2 text-center font-bold"></div><div><label class="text-amber-200 text-xs uppercase font-bold block mb-1">3er</label><input type="text" id="res-${i}-3" value="${res.third}" placeholder="2" class="input-luxury w-full rounded px-3 py-2 text-center font-bold"></div></div></div>`;
+                container.innerHTML += `<div class="border border-amber-500/20 rounded-lg p-4 bg-emerald-950/20"><h4 class="font-black uppercase text-amber-400 mb-3 text-center">${i}ª Válida</h4><div class="space-y-3"><div><label class="text-amber-200 text-xs uppercase font-bold block mb-1">1er</label><input type="text" id="res-${i}-1" value="${res.first}" placeholder="3 o 3,5" class="input-luxury w-full rounded px-3 py-2 text-center font-bold"></div><div><label class="text-amber-200 text-xs uppercase font-bold block mb-1">2do</label><input type="text" id="res-${i}-2" value="${res.second}" placeholder="7" class="input-luxury w-full rounded px-3 py-2 text-center font-bold"></div><div><label class="text-amber-200 text-xs uppercase font-bold block mb-1">3er</label><input type="text" id="res-${i}-3" value="${res.third}" placeholder="2" class="input-luxury w-full rounded px-3 py-2 text-center font-bold"></div></div></div>`;
             }
         }
 
@@ -485,10 +656,7 @@
                 document.getElementById('editingPlayerName').textContent = playerEditing.name;
                 
                 const grid = document.getElementById('editRacesGrid');
-                if (!grid) {
-                    console.error("No se encontró editRacesGrid");
-                    return;
-                }
+                if (!grid) return;
                 
                 grid.innerHTML = '';
                 for (let i = 1; i <= 6; i++) {
@@ -500,10 +668,10 @@
                         if (!race.scratched.includes(j)) {
                             const isSelected = playerEditing.picks[i] == j;
                             const activeClasses = isSelected ? 'selected' : '';
-                            buttonsHtml += `<button type="button" onclick="selectEditHorse(${i}, ${j}, this)" class="horse-btn w-10 h-10 rounded-lg border border-amber-500/30 bg-emerald-900/50 text-amber-400 font-bold text-sm ${activeClasses}">${j}</button>`;
+                            buttonsHtml += `<button type="button" onclick="selectEditHorse(${i}, ${j}, this)" class="horse-btn w-10 h-10 rounded-lg border border-amber-500/30 text-amber-400 font-bold text-sm ${activeClasses}">${j}</button>`;
                         }
                     }
-                    grid.innerHTML += `<div class="bg-emerald-950/30 border border-amber-500/20 rounded-lg p-3"><label class="text-amber-400 text-xs font-black uppercase block mb-2 text-center">${i}ª Válida</label><div class="flex flex-wrap gap-2 justify-center">${buttonsHtml}</div></div>`;
+                    grid.innerHTML += `<div class="bg-emerald-950/20 border border-amber-500/20 rounded-lg p-3"><label class="text-amber-400 text-xs font-black uppercase block mb-2 text-center">${i}ª Válida</label><div class="flex flex-wrap gap-2 justify-center">${buttonsHtml}</div></div>`;
                 }
             } else {
                 alert("Jugador no encontrado");
@@ -519,10 +687,7 @@
         }
 
         async function saveEditedPrediction() {
-            if (!playerEditing) {
-                alert("No hay jugador seleccionado");
-                return;
-            }
+            if (!playerEditing) return;
             await db.collection("players").doc(playerEditing.name).update({ picks: playerEditing.picks });
             alert("✅ Cambios guardados");
             document.getElementById('editPlayerForm').classList.add('hidden-section');
@@ -549,21 +714,13 @@
             }
         }
 
-        // FUNCIÓN PDF CORREGIDA - OPCIÓN 1 (RECOMENDADA)
         async function generatePDF() {
             const element = document.getElementById('view-ranking');
-            if (!element) {
-                alert("Error: No se encontró la vista de ranking");
-                return;
-            }
+            if (!element) return alert("Error: No se encontró el ranking");
 
-            // Mostrar temporalmente el ranking si está oculto
             const wasHidden = element.classList.contains('hidden-section');
             if (wasHidden) {
                 element.classList.remove('hidden-section');
-                // Forzar reflow
-                element.offsetHeight;
-                // Pequeña espera para que se renderice
                 await new Promise(resolve => setTimeout(resolve, 500));
             }
 
@@ -572,29 +729,16 @@
                     margin: 0.5,
                     filename: 'Ranking_Polla_Hipica.pdf',
                     image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { 
-                        scale: 2, 
-                        useCORS: true,
-                        logging: false,
-                        backgroundColor: '#022c22'
-                    },
-                    jsPDF: { 
-                        unit: 'in', 
-                        format: 'letter', 
-                        orientation: 'landscape' 
-                    }
+                    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#022c22' },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
                 };
 
                 await html2pdf().set(opt).from(element).save();
-                alert("✅ PDF generado correctamente");
             } catch (error) {
-                console.error("Error generando PDF:", error);
-                alert("❌ Error al generar PDF: " + error.message);
+                console.error("Error PDF:", error);
+                alert("Error: " + error.message);
             } finally {
-                // Restaurar estado oculto si era necesario
-                if (wasHidden) {
-                    element.classList.add('hidden-section');
-                }
+                if (wasHidden) element.classList.add('hidden-section');
             }
         }
 
