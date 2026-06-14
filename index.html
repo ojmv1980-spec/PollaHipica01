@@ -37,7 +37,6 @@
         .horse-btn { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
         .horse-btn:hover:not(.selected) { background-color: rgba(251, 191, 36, 0.15); transform: scale(1.05); }
         .horse-btn.selected { background-color: #fbbf24; border-color: #fbbf24; color: #022c22; font-weight: 900; box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4); transform: scale(1.1); }
-        .horse-btn.scratched { opacity: 0.3; pointer-events: none; background-color: #7f1d1d; }
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #022c22; }
         ::-webkit-scrollbar-thumb { background: #d97706; border-radius: 4px; }
@@ -114,11 +113,7 @@
                 <h2 class="text-3xl font-black uppercase gold-text">Tablas de Posiciones</h2>
                 <p class="text-amber-200/70 mt-2">Actualización en tiempo real desde Firebase</p>
             </div>
-
-            <!-- Contenedor dinámico de tablas -->
-            <div id="rankingTablesContainer" class="space-y-8">
-                <!-- Las tablas se renderizan dinámicamente según el estado de inscripciones -->
-            </div>
+            <div id="rankingTablesContainer" class="space-y-8"></div>
         </section>
 
         <!-- VISTA ADMIN -->
@@ -138,6 +133,7 @@
                 </button>
             </div>
 
+            <!-- Tab: Montos -->
             <div id="tab-montos" class="admin-content glass-card rounded-2xl p-6">
                 <h3 class="text-xl font-black uppercase mb-4 gold-text">Contabilidad Básica</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -156,7 +152,7 @@
                 </div>
                 <div class="mt-6 pt-6 border-t border-amber-500/20">
                     <h4 class="text-lg font-black uppercase text-amber-400 mb-4">Control de Inscripciones</h4>
-                    <div class="flex items-center justify-between bg-emerald-950/50 rounded-lg p-4">
+                    <div class="flex items-center justify-between bg-emerald-950/50 rounded-lg p-4 flex-wrap gap-4">
                         <div>
                             <p class="font-bold text-amber-200">Estado: <span id="inscripcionesStatus" class="text-amber-400">ABIERTAS</span></p>
                             <p class="text-sm text-amber-200/70">Participantes válidos: <span id="validPlayersCount">0</span></p>
@@ -168,33 +164,29 @@
                 </div>
             </div>
 
+            <!-- Tab: Carreras -->
             <div id="tab-carreras" class="admin-content hidden-section glass-card rounded-2xl p-6">
                 <h3 class="text-xl font-black uppercase mb-4 gold-text">Configuración de Carreras</h3>
                 
-                <!-- BLOQUE 1: Cantidad de ejemplares -->
                 <div class="mb-8 p-6 bg-emerald-950/30 border border-amber-500/20 rounded-xl">
                     <h4 class="text-lg font-black uppercase text-amber-400 mb-4"><i class="fa-solid fa-hashtag mr-2"></i>Cantidad de Ejemplares por Carrera</h4>
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="raceCountInputs">
-                        <!-- Inputs generados dinámicamente -->
-                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="raceCountInputs"></div>
                     <button onclick="saveRaceCounts()" class="gold-btn mt-6 px-6 py-2 rounded-lg text-sm">
                         <i class="fa-solid fa-save mr-2"></i> Guardar Cantidades
                     </button>
                 </div>
 
-                <!-- BLOQUE 2: Retirados -->
                 <div class="p-6 bg-red-950/20 border border-red-500/30 rounded-xl">
                     <h4 class="text-lg font-black uppercase text-red-300 mb-4"><i class="fa-solid fa-horse-circle-xmark mr-2"></i>Marcar Ejemplares Retirados</h4>
                     <p class="text-amber-200/70 text-sm mb-4">Haz clic en los botones para marcar/desmarcar retirados. Los caballos retirados NO aparecerán en la pantalla de selección del usuario.</p>
-                    <div id="scratchedButtonsContainer" class="space-y-4">
-                        <!-- Botones generados dinámicamente -->
-                    </div>
+                    <div id="scratchedButtonsContainer" class="space-y-4"></div>
                     <button onclick="saveScratchedConfig()" class="danger-btn mt-6 px-6 py-2 rounded-lg text-sm">
                         <i class="fa-solid fa-save mr-2"></i> Guardar Retirados
                     </button>
                 </div>
             </div>
 
+            <!-- Tab: Resultados -->
             <div id="tab-resultados" class="admin-content hidden-section glass-card rounded-2xl p-6">
                 <h3 class="text-xl font-black uppercase mb-4 gold-text">Carga de Resultados (Solo Números)</h3>
                 <p class="text-amber-200/70 text-sm mb-4">Separa con coma si hay empate (ej: "3,5" para empate en 1er lugar).</p>
@@ -204,6 +196,7 @@
                 </button>
             </div>
 
+            <!-- Tab: Editar -->
             <div id="tab-editar" class="admin-content hidden-section glass-card rounded-2xl p-6">
                 <h3 class="text-xl font-black uppercase mb-4 gold-text">Editar Jugadas de Participantes</h3>
                 <p class="text-amber-200/70 text-sm mb-4">Haz clic en cualquier número para cambiar la selección del participante.</p>
@@ -221,13 +214,12 @@
                                 <th class="p-3 text-center">Acción</th>
                             </tr>
                         </thead>
-                        <tbody id="editPlayersTableBody" class="text-amber-100 text-sm">
-                            <!-- Filas generadas dinámicamente -->
-                        </tbody>
+                        <tbody id="editPlayersTableBody" class="text-amber-100 text-sm"></tbody>
                     </table>
                 </div>
             </div>
 
+            <!-- Tab: PDFs -->
             <div id="tab-pdfs" class="admin-content hidden-section glass-card rounded-2xl p-6">
                 <h3 class="text-xl font-black uppercase mb-4 gold-text">Exportar y Compartir</h3>
                 <div class="mb-6">
@@ -242,11 +234,12 @@
                 </div>
             </div>
 
+            <!-- Tab: Zona Roja -->
             <div id="tab-roja" class="admin-content hidden-section danger-zone rounded-2xl p-6 pulse-danger">
                 <h3 class="text-2xl font-black uppercase mb-2 danger-text">
                     <i class="fa-solid fa-triangle-exclamation mr-2"></i> ZONA DE PELIGRO
                 </h3>
-                <p class="text-red-200 text-sm mb-6">️ Las acciones en esta sección son IRREVERSIBLES. Úsalas únicamente para resetear la jornada y empezar de cero.</p>
+                <p class="text-red-200 text-sm mb-6">⚠️ Las acciones en esta sección son IRREVERSIBLES. Úsalas únicamente para resetear la jornada y empezar de cero.</p>
 
                 <div class="space-y-6">
                     <div class="bg-red-950/50 border border-red-500/30 rounded-xl p-5">
@@ -281,14 +274,14 @@
     <div id="editModal" class="hidden-section fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
         <div class="glass-card rounded-2xl p-6 max-w-md w-full">
             <h3 class="text-xl font-black uppercase gold-text mb-4">Cambiar Selección</h3>
-            <p class="text-amber-200/70 text-sm mb-4">Participante: <span id="editModalPlayer" class="text-amber-400 font-bold"></span></p>
+            <p class="text-amber-200/70 text-sm mb-2">Participante: <span id="editModalPlayer" class="text-amber-400 font-bold"></span></p>
             <p class="text-amber-200/70 text-sm mb-4">Válida: <span id="editModalRace" class="text-amber-400 font-bold"></span></p>
             <div id="editModalButtons" class="flex flex-wrap gap-2 justify-center mb-4"></div>
             <button onclick="closeEditModal()" class="gold-btn w-full px-4 py-2 rounded-lg text-sm">Cerrar</button>
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC CON FIREBASE INTEGRADO -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
         // ==========================================
         // CONFIGURACIÓN DE FIREBASE
@@ -307,7 +300,6 @@
 
         // Variables globales
         let currentPlayer = null;
-        let playerEditing = null;
         let allPlayers = []; 
         let appSettings = { betValue: 10, inscripcionesAbiertas: true };
         let raceConfig = {
@@ -320,6 +312,7 @@
             3: { first: "", second: "", third: "" }, 4: { first: "", second: "", third: "" },
             5: { first: "", second: "", third: "" }, 6: { first: "", second: "", third: "" }
         };
+        let editModalData = { player: null, race: null };
 
         // ==========================================
         // ESCUCHAS EN TIEMPO REAL
@@ -328,7 +321,6 @@
             db.collection("players").onSnapshot((snapshot) => {
                 allPlayers = [];
                 snapshot.forEach(doc => { allPlayers.push(doc.data()); });
-                // Eliminar jugadores incompletos automáticamente
                 eliminarJugadoresIncompletos();
                 updateRankingTables(); 
                 generateWhatsappLog();
@@ -341,7 +333,7 @@
                     if (doc.exists) {
                         raceConfig[i] = doc.data();
                         renderRacesGrid(); 
-                        renderAdminRacesConfig();
+                        renderRaceCountInputs();
                         renderScratchedButtons();
                     }
                 });
@@ -358,7 +350,7 @@
 
             db.collection("settings").doc("general").onSnapshot((doc) => {
                 if (doc.exists) {
-                    appSettings = doc.data();
+                    appSettings = { ...appSettings, ...doc.data() };
                     document.getElementById('betValue').value = appSettings.betValue || 10;
                     updateInscripcionesUI();
                     calculatePrize();
@@ -366,25 +358,22 @@
             });
         }
 
-        // Inicializar al cargar
         document.addEventListener('DOMContentLoaded', () => {
             activarTiempoReal();
             renderRaceCountInputs();
             renderScratchedButtons();
             renderRacesGrid();
-            renderAdminRacesConfig();
             renderAdminResultsConfig();
         });
 
         // ==========================================
-        // ELIMINAR JUGADORES INCOMPLETOS
+        // ELIMINAR JUGADORES INCOMPLETOS (OBS 5)
         // ==========================================
         async function eliminarJugadoresIncompletos() {
             const batch = db.batch();
             let eliminados = 0;
             
             allPlayers.forEach(player => {
-                // Verificar si tiene las 6 válidas completas
                 let completas = true;
                 for (let i = 1; i <= 6; i++) {
                     if (!player.picks || !player.picks[i]) {
@@ -392,7 +381,6 @@
                         break;
                     }
                 }
-                
                 if (!completas) {
                     batch.delete(db.collection("players").doc(player.name));
                     eliminados++;
@@ -445,9 +433,8 @@
             let name = input.value.trim();
             if (!name) return alert("Por favor ingresa un nombre o apodo.");
 
-            // Verificar si inscripciones están cerradas
             if (!appSettings.inscripcionesAbiertas) {
-                return alert("⚠️ Las inscripciones están CERRADAS. No se pueden registrar nuevos participantes.");
+                return alert("️ Las inscripciones están CERRADAS. No se pueden registrar nuevos participantes.");
             }
 
             let baseName = name;
@@ -517,7 +504,7 @@
             }, 100);
         }
 
-        // OBSERVACIÓN 2: Después de enviar, volver a INICIO con casilla vacía
+        // OBS 2: Después de enviar, volver a INICIO con casilla vacía
         async function submitPredictions() {
             if (!currentPlayer) return;
             const player = allPlayers.find(p => p.name === currentPlayer);
@@ -526,7 +513,6 @@
             }
             alert(`¡Jugada enviada con éxito para ${currentPlayer}!`);
             
-            // Limpiar todo y volver a inicio
             currentPlayer = null;
             document.getElementById('playerName').value = '';
             document.getElementById('nameSuggestion').classList.add('hidden');
@@ -537,7 +523,7 @@
 
         // ==========================================
         // RENDERIZADO DE CARRERAS (VISTA USUARIO)
-        // OBSERVACIÓN 7: Caballos retirados no aparecen
+        // OBS 7: Caballos retirados no aparecen
         // ==========================================
         function renderRacesGrid() {
             const grid = document.getElementById('racesGrid');
@@ -547,7 +533,6 @@
                 const race = raceConfig[i];
                 let buttonsHtml = '';
                 for (let j = 1; j <= race.count; j++) {
-                    // OBSERVACIÓN 7: No mostrar caballos retirados
                     if (!race.scratched.includes(j)) {
                         buttonsHtml += `<button type="button" id="btn-race-${i}-horse-${j}" onclick="selectHorse(${i}, ${j}, this)" class="horse-btn w-10 h-10 rounded-lg border border-amber-500/30 bg-emerald-900/50 text-amber-400 font-bold text-sm flex items-center justify-center">${j}</button>`;
                     }
@@ -557,7 +542,7 @@
         }
 
         // ==========================================
-        // OBSERVACIÓN 7: CONFIGURACIÓN DE CARRERAS SEPARADA
+        // OBS 7: CONFIGURACIÓN DE CARRERAS SEPARADA
         // ==========================================
         function renderRaceCountInputs() {
             const container = document.getElementById('raceCountInputs');
@@ -575,22 +560,6 @@
             }
         }
 
-        async function saveRaceCounts() {
-            const batch = db.batch();
-            for (let i = 1; i <= 6; i++) {
-                const newCount = parseInt(document.getElementById(`race-count-input-${i}`).value);
-                if (newCount >= 4 && newCount <= 16) {
-                    raceConfig[i].count = newCount;
-                    raceConfig[i].scratched = []; // Resetear retirados al cambiar cantidad
-                    batch.set(db.collection("races").doc(i.toString()), raceConfig[i]);
-                }
-            }
-            await batch.commit();
-            renderScratchedButtons();
-            alert("✅ Cantidades de ejemplares actualizadas.");
-        }
-
-        // OBSERVACIÓN 7: Botones separados para retirados
         function renderScratchedButtons() {
             const container = document.getElementById('scratchedButtonsContainer');
             if (!container) return;
@@ -624,6 +593,21 @@
             renderScratchedButtons();
         }
 
+        async function saveRaceCounts() {
+            const batch = db.batch();
+            for (let i = 1; i <= 6; i++) {
+                const newCount = parseInt(document.getElementById(`race-count-input-${i}`).value);
+                if (newCount >= 4 && newCount <= 16) {
+                    raceConfig[i].count = newCount;
+                    raceConfig[i].scratched = [];
+                    batch.set(db.collection("races").doc(i.toString()), raceConfig[i]);
+                }
+            }
+            await batch.commit();
+            renderScratchedButtons();
+            alert("✅ Cantidades de ejemplares actualizadas.");
+        }
+
         async function saveScratchedConfig() {
             const batch = db.batch();
             for (let i = 1; i <= 6; i++) {
@@ -634,7 +618,7 @@
         }
 
         // ==========================================
-        // OBSERVACIÓN 3: CONTROL DE INSCRIPCIONES
+        // OBS 3: CONTROL DE INSCRIPCIONES
         // ==========================================
         async function toggleInscripciones() {
             const nuevoEstado = !appSettings.inscripcionesAbiertas;
@@ -663,7 +647,7 @@
         }
 
         // ==========================================
-        // OBSERVACIÓN 3 y 6: TABLAS DE RANKING DINÁMICAS
+        // OBS 3 y 6: TABLAS DE RANKING DINÁMICAS
         // ==========================================
         function updateRankingTables() {
             const container = document.getElementById('rankingTablesContainer');
@@ -672,25 +656,21 @@
             const sortedPlayers = [...allPlayers].sort((a, b) => b.total - a.total);
             const inscripcionesCerradas = !appSettings.inscripcionesAbiertas;
             
-            // Calcular premio actual
             const totalRecaudado = allPlayers.length * (appSettings.betValue || 10);
             const premioActual = (totalRecaudado * 0.80).toFixed(2);
             
             let html = '';
             
-            // OBSERVACIÓN 3: Si inscripciones cerradas, PUNTAJE GENERAL arriba
             if (inscripcionesCerradas) {
                 html += renderPuntajeGeneralTable(sortedPlayers);
                 html += renderPollasJugadasTable(allPlayers, premioActual);
             } else {
-                // OBSERVACIÓN 3: Si inscripciones abiertas, solo Pollas Jugadas
                 html += renderPollasJugadasTable(allPlayers, premioActual);
             }
             
             container.innerHTML = html;
         }
 
-        // OBSERVACIÓN 6: TABLA DE POLLAS JUGADAS (antes Transparencia)
         function renderPollasJugadasTable(players, premioActual) {
             let html = `
                 <div class="glass-card rounded-2xl p-6 overflow-x-auto">
@@ -726,7 +706,6 @@
             return html;
         }
 
-        // OBSERVACIÓN 3: TABLA DE PUNTAJE GENERAL (antes Ranking General)
         function renderPuntajeGeneralTable(sortedPlayers) {
             let html = `
                 <div class="glass-card rounded-2xl p-6 overflow-x-auto">
@@ -768,7 +747,7 @@
         }
 
         // ==========================================
-        // OBSERVACIÓN 4: EDITAR JUGADA - TABLA COMPLETA
+        // OBS 4: EDITAR JUGADA - TABLA COMPLETA
         // ==========================================
         function renderEditPlayersTable() {
             const tbody = document.getElementById('editPlayersTableBody');
@@ -797,7 +776,7 @@
                 }
                 
                 row += `<td class="p-3 text-center">
-                    <button onclick="deletePlayer('${player.name}')" class="text-red-400 hover:text-red-300 text-xs">
+                    <button onclick="deletePlayer('${player.name}')" class="text-red-400 hover:text-red-300 text-xs" title="Eliminar participante">
                         <i class="fa-solid fa-trash"></i>
                     </button>
                 </td></tr>`;
@@ -806,16 +785,21 @@
             });
         }
 
-        // Modal para editar selección
-        let editModalData = { player: null, race: null };
-
         function openEditModal(playerName, race) {
             editModalData = { player: playerName, race: race };
             document.getElementById('editModalPlayer').textContent = playerName;
             document.getElementById('editModalRace').textContent = race + 'ª Válida';
             
             const container = document.getElementById('editModalButtons');
+            if (!container) return;
+            
             container.innerHTML = '';
+            
+            if (!raceConfig[race]) {
+                container.innerHTML = '<p class="text-red-400 text-sm">Cargando configuración...</p>';
+                document.getElementById('editModal').classList.remove('hidden-section');
+                return;
+            }
             
             const raceConfig_data = raceConfig[race];
             for (let j = 1; j <= raceConfig_data.count; j++) {
@@ -930,7 +914,7 @@
         // ==========================================
         function generateWhatsappLog() {
             const sortedPlayers = [...allPlayers].sort((a, b) => b.total - a.total);
-            let log = " *Polla Hípica - Ranking* \nNOMBRE|1V|P|2V|P|3V|P|4V|P|5V|P|6V|P|Tot|\n-----------------------------------\n";
+            let log = "🏆 *Polla Hípica - Ranking* 🏆\nNOMBRE|1V|P|2V|P|3V|P|4V|P|5V|P|6V|P|Tot|\n-----------------------------------\n";
             sortedPlayers.forEach(p => {
                 log += `${p.name.substring(0, 10).padEnd(10, ' ')}|${(p.picks[1]||'-').toString().padEnd(2, ' ')}|${p.scores[1]||0}|${(p.picks[2]||'-').toString().padEnd(2, ' ')}|${p.scores[2]||0}|${(p.picks[3]||'-').toString().padEnd(2, ' ')}|${p.scores[3]||0}|${(p.picks[4]||'-').toString().padEnd(2, ' ')}|${p.scores[4]||0}|${(p.picks[5]||'-').toString().padEnd(2, ' ')}|${p.scores[5]||0}|${(p.picks[6]||'-').toString().padEnd(2, ' ')}|${p.scores[6]||0}|${p.total.toString().padEnd(3, ' ')}\n`;
             });
@@ -999,7 +983,7 @@
         }
 
         async function fullReset() {
-            if (!confirm("🔴 RESETEO TOTAL. ¿Continuar?")) return;
+            if (!confirm(" RESETEO TOTAL. ¿Continuar?")) return;
             const code = prompt("Escribe SI para confirmar:");
             if (code !== "SI") return alert("Cancelado.");
             const snapPlayers = await db.collection("players").get();
