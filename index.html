@@ -28,30 +28,19 @@
         .glass-card { background: rgba(6, 78, 59, 0.4); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(251, 191, 36, 0.2); box-shadow: 0 8px 32px 0 rgba(251, 191, 36, 0.1); }
         .gold-btn { background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); color: #022c22; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.3s ease; }
         .gold-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(251, 191, 36, 0.4); }
-        .danger-btn { background: linear-gradient(135deg, #dc2626 0%, #7f1d1d 100%); color: #fff; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.3s ease; border: 2px solid #fca5a5; }
-        .danger-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(220, 38, 38, 0.6); }
         .gold-text { color: #fbbf24; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        .danger-text { color: #fca5a5; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .input-luxury { background: rgba(2, 44, 34, 0.8); border: 1px solid rgba(251, 191, 36, 0.3); color: #fbbf24; }
         .input-luxury:focus { outline: none; border-color: #fbbf24; box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.2); }
         .horse-btn { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
         .horse-btn:hover:not(.selected) { background-color: rgba(251, 191, 36, 0.15); transform: scale(1.05); }
         .horse-btn.selected { background-color: #fbbf24; border-color: #fbbf24; color: #022c22; font-weight: 900; box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4); transform: scale(1.1); }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #022c22; }
-        ::-webkit-scrollbar-thumb { background: #d97706; border-radius: 4px; }
         .hidden-section { display: none; }
         .active-tab { border-bottom: 2px solid #fbbf24; color: #fbbf24; }
-        .danger-zone { background: linear-gradient(135deg, rgba(127, 29, 29, 0.3) 0%, rgba(185, 28, 28, 0.2) 100%); border: 2px solid #dc2626; }
-        @keyframes pulse-danger { 0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); } 50% { box-shadow: 0 0 20px 5px rgba(220, 38, 38, 0.6); } }
-        .pulse-danger { animation: pulse-danger 2s infinite; }
-        .prize-display { background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(217, 119, 6, 0.1) 100%); border: 1px solid rgba(251, 191, 36, 0.3); }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
 </head>
 <body class="font-sans min-h-screen flex flex-col">
 
-    <!-- HEADER -->
     <header class="sticky top-0 z-50 glass-card border-b border-amber-500/30">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
@@ -59,81 +48,94 @@
                 <h1 class="text-2xl md:text-3xl font-black uppercase tracking-wider gold-text">Polla Hípica</h1>
             </div>
             <nav class="flex gap-4 md:gap-6">
-                <button onclick="showView('main')" class="font-bold uppercase text-sm hover:text-amber-300 transition-colors">Inicio</button>
-                <button onclick="showView('ranking')" class="font-bold uppercase text-sm hover:text-amber-300 transition-colors">Ranking</button>
-                <button onclick="showView('admin')" class="font-bold uppercase text-sm text-amber-400 border border-amber-500/50 px-3 py-1 rounded hover:bg-amber-500/10 transition-colors">
-                    <i class="fa-solid fa-lock mr-1"></i> Admin
-                </button>
+                <button onclick="showView('main')" class="font-bold uppercase text-sm hover:text-amber-300">Inicio</button>
+                <button onclick="showView('ranking')" class="font-bold uppercase text-sm hover:text-amber-300">Ranking</button>
+                <button onclick="showView('admin')" class="font-bold uppercase text-sm text-amber-400 border border-amber-500/50 px-3 py-1 rounded">Admin</button>
             </nav>
         </div>
     </header>
 
-    <!-- MAIN CONTENT -->
     <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full">
 
-        <!-- VISTA PRINCIPAL -->
         <section id="view-main" class="space-y-8">
             <div class="glass-card rounded-2xl p-8 max-w-2xl mx-auto text-center">
                 <h2 class="text-2xl font-black uppercase mb-6 gold-text">Ingresa a la Jugada</h2>
                 <div class="flex flex-col md:flex-row gap-4 items-center justify-center">
-                    <input type="text" id="playerName" placeholder="Tu Nombre o Apodo" class="input-luxury rounded-lg px-4 py-3 w-full md:w-80 text-lg font-semibold placeholder-amber-700/50">
-                    <button onclick="registerPlayer()" class="gold-btn px-8 py-3 rounded-lg w-full md:w-auto shadow-lg shadow-amber-500/20">
-                        PARTICIPAR
-                    </button>
+                    <input type="text" id="playerName" placeholder="Tu Nombre o Apodo" class="input-luxury rounded-lg px-4 py-3 w-full md:w-80 text-lg">
+                    <button onclick="registerPlayer()" class="gold-btn px-8 py-3 rounded-lg">PARTICIPAR</button>
                 </div>
                 <p id="nameSuggestion" class="text-amber-400 text-sm mt-3 hidden"></p>
             </div>
 
-            <div id="raceSelectionBlock" class="hidden-section glass-card rounded-2xl p-6 md:p-8">
-                <h3 class="text-xl font-black uppercase mb-6 gold-text border-b border-amber-500/30 pb-2 text-center">
-                    <i class="fa-solid fa-ticket mr-2"></i> Selecciona 1 Ejemplar por Válida
-                </h3>
+            <div id="raceSelectionBlock" class="hidden-section glass-card rounded-2xl p-6">
+                <h3 class="text-xl font-black uppercase mb-6 gold-text text-center">Selecciona 1 Ejemplar por Válida</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="racesGrid"></div>
                 <div class="mt-8 text-center">
-                    <button onclick="submitPredictions()" class="gold-btn px-12 py-4 rounded-xl text-lg shadow-xl shadow-amber-500/30">
-                        <i class="fa-solid fa-paper-plane mr-2"></i> ENVIAR JUGADA
-                    </button>
+                    <button onclick="submitPredictions()" class="gold-btn px-12 py-4 rounded-xl">ENVIAR JUGADA</button>
                 </div>
             </div>
 
-            <div class="glass-card rounded-2xl p-6 md:p-8 mt-8">
-                <h3 class="text-xl font-black uppercase mb-4 gold-text"><i class="fa-solid fa-scale-balanced mr-2"></i> Reglamento de Puntuación</h3>
-                <ul class="space-y-3 text-amber-100/80 text-sm md:text-base list-disc list-inside">
-                    <li><strong class="text-amber-400">1er Lugar:</strong> 5 pts. | <strong class="text-amber-400">2do Lugar:</strong> 3 pts. | <strong class="text-amber-400">3er Lugar:</strong> 1 pto.</li>
-                    <li><strong>Empate 1er o 2do lugar:</strong> Se otorgan los puntos correspondientes a los empatados, pero <u>no se otorga puntuación al 3er lugar</u>.</li>
+            <div class="glass-card rounded-2xl p-6">
+                <h3 class="text-xl font-black uppercase mb-4 gold-text">Reglamento de Puntuación</h3>
+                <ul class="space-y-2 text-amber-100/80 list-disc list-inside">
+                    <li><strong class="text-amber-400">1er Lugar:</strong> 5 puntos. | <strong class="text-amber-400">2do Lugar:</strong> 3 puntos. | <strong class="text-amber-400">3er Lugar:</strong> 1 punto.</li>
+                    <li><strong>Empate 1er lugar:</strong> Ambos otorgan 5 pts, no se otorga puntuación al 3er lugar.</li>
+                    <li><strong>Empate 2do lugar:</strong> Ambos otorgan 3 pts, no se otorga puntuación al 3er lugar.</li>
                     <li><strong>Empate 3er lugar:</strong> Ambos otorgan 1 pto.</li>
-                    <li><strong>Caballos Retirados:</strong> Se tomará el número siguiente activo hasta encontrar un ejemplar que corra.</li>
+                    <li><strong>Caballos Retirados:</strong> Se tomará el número siguiente activo. Si el siguiente también está retirado, se buscará el siguiente hasta encontrar un ejemplar activo.</li>
                 </ul>
             </div>
         </section>
 
-        <!-- VISTA RANKING -->
         <section id="view-ranking" class="hidden-section space-y-8">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-black uppercase gold-text">Tablas de Posiciones</h2>
-                <p class="text-amber-200/70 mt-2">Actualización en tiempo real desde Firebase</p>
+            <h2 class="text-3xl font-black uppercase gold-text text-center">Tablas de Posiciones</h2>
+            <p class="text-amber-200/70 text-center">Ordenadas de mayor a menor puntaje</p>
+            
+            <div class="glass-card rounded-2xl p-6 overflow-x-auto">
+                <h3 class="text-lg font-black uppercase mb-4 text-amber-400">Tabla de Transparencia (Selecciones)</h3>
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-amber-400 text-sm uppercase border-b border-amber-500/30">
+                            <th class="p-3">Nombre</th>
+                            <th class="p-3 text-center">1V</th><th class="p-3 text-center">2V</th><th class="p-3 text-center">3V</th>
+                            <th class="p-3 text-center">4V</th><th class="p-3 text-center">5V</th><th class="p-3 text-center">6V</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transparencyTableBody" class="text-amber-100 text-sm"></tbody>
+                </table>
             </div>
-            <div id="rankingTablesContainer" class="space-y-8"></div>
+
+            <div class="glass-card rounded-2xl p-6 overflow-x-auto">
+                <h3 class="text-lg font-black uppercase mb-4 text-amber-400">Ranking General con Puntaje</h3>
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-amber-400 text-sm uppercase border-b border-amber-500/30">
+                            <th class="p-3">Nombre</th>
+                            <th class="p-3 text-center">1V</th><th class="p-3 text-center">Pts</th>
+                            <th class="p-3 text-center">2V</th><th class="p-3 text-center">Pts</th>
+                            <th class="p-3 text-center">3V</th><th class="p-3 text-center">Pts</th>
+                            <th class="p-3 text-center">4V</th><th class="p-3 text-center">Pts</th>
+                            <th class="p-3 text-center">5V</th><th class="p-3 text-center">Pts</th>
+                            <th class="p-3 text-center">6V</th><th class="p-3 text-center">Pts</th>
+                            <th class="p-3 text-center font-black text-amber-400">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankingTableBody" class="text-amber-100 text-sm"></tbody>
+                </table>
+            </div>
         </section>
 
-        <!-- VISTA ADMIN -->
         <section id="view-admin" class="hidden-section space-y-6">
-            <div class="text-center mb-6">
-                <h2 class="text-3xl font-black uppercase gold-text">Panel de Administrador</h2>
-            </div>
+            <h2 class="text-3xl font-black uppercase gold-text text-center">Panel de Administrador</h2>
 
             <div class="flex flex-wrap gap-2 border-b border-amber-500/30 mb-6">
                 <button onclick="showAdminTab('montos')" class="admin-tab active-tab px-4 py-2 font-bold uppercase text-sm" data-tab="montos">Montos</button>
-                <button onclick="showAdminTab('carreras')" class="admin-tab px-4 py-2 font-bold uppercase text-sm text-amber-200/60" data-tab="carreras">Carreras</button>
+                <button onclick="showAdminTab('carreras')" class="admin-tab px-4 py-2 font-bold uppercase text-sm text-amber-200/60" data-tab="carreras">Carreras / Retirados</button>
                 <button onclick="showAdminTab('resultados')" class="admin-tab px-4 py-2 font-bold uppercase text-sm text-amber-200/60" data-tab="resultados">Resultados</button>
                 <button onclick="showAdminTab('editar')" class="admin-tab px-4 py-2 font-bold uppercase text-sm text-amber-200/60" data-tab="editar">Editar Jugada</button>
-                <button onclick="showAdminTab('pdfs')" class="admin-tab px-4 py-2 font-bold uppercase text-sm text-amber-200/60" data-tab="pdfs">PDFs</button>
-                <button onclick="showAdminTab('roja')" class="admin-tab px-4 py-2 font-bold uppercase text-sm text-red-400" data-tab="roja">
-                    <i class="fa-solid fa-triangle-exclamation mr-1"></i> ZONA ROJA
-                </button>
+                <button onclick="showAdminTab('pdfs')" class="admin-tab px-4 py-2 font-bold uppercase text-sm text-amber-200/60" data-tab="pdfs">PDFs / WhatsApp</button>
             </div>
 
-            <!-- Tab: Montos -->
             <div id="tab-montos" class="admin-content glass-card rounded-2xl p-6">
                 <h3 class="text-xl font-black uppercase mb-4 gold-text">Contabilidad Básica</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -142,7 +144,7 @@
                         <input type="number" id="betValue" value="10" class="input-luxury w-full rounded-lg px-4 py-2" onchange="updateBetValue(this.value)">
                     </div>
                     <div>
-                        <label class="block text-amber-400 text-sm font-bold mb-2">Total Recaudado</label>
+                        <label class="block text-amber-400 text-sm font-bold mb-2">Total Recaudado (Simulado)</label>
                         <input type="text" id="totalCollected" class="input-luxury w-full rounded-lg px-4 py-2 bg-emerald-950" readonly>
                     </div>
                     <div>
@@ -150,140 +152,45 @@
                         <input type="text" id="prizePool" class="input-luxury w-full rounded-lg px-4 py-2 bg-emerald-800 font-black text-amber-400" readonly>
                     </div>
                 </div>
-                <div class="mt-6 pt-6 border-t border-amber-500/20">
-                    <h4 class="text-lg font-black uppercase text-amber-400 mb-4">Control de Inscripciones</h4>
-                    <div class="flex items-center justify-between bg-emerald-950/50 rounded-lg p-4 flex-wrap gap-4">
-                        <div>
-                            <p class="font-bold text-amber-200">Estado: <span id="inscripcionesStatus" class="text-amber-400">ABIERTAS</span></p>
-                            <p class="text-sm text-amber-200/70">Participantes válidos: <span id="validPlayersCount">0</span></p>
-                        </div>
-                        <button id="btnToggleInscripciones" onclick="toggleInscripciones()" class="gold-btn px-6 py-3 rounded-lg text-sm">
-                            <i class="fa-solid fa-lock-open mr-2"></i> CERRAR INSCRIPCIONES
-                        </button>
-                    </div>
-                </div>
             </div>
 
-            <!-- Tab: Carreras -->
             <div id="tab-carreras" class="admin-content hidden-section glass-card rounded-2xl p-6">
-                <h3 class="text-xl font-black uppercase mb-4 gold-text">Configuración de Carreras</h3>
-                
-                <div class="mb-8 p-6 bg-emerald-950/30 border border-amber-500/20 rounded-xl">
-                    <h4 class="text-lg font-black uppercase text-amber-400 mb-4"><i class="fa-solid fa-hashtag mr-2"></i>Cantidad de Ejemplares por Carrera</h4>
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="raceCountInputs"></div>
-                    <button onclick="saveRaceCounts()" class="gold-btn mt-6 px-6 py-2 rounded-lg text-sm">
-                        <i class="fa-solid fa-save mr-2"></i> Guardar Cantidades
-                    </button>
-                </div>
-
-                <div class="p-6 bg-red-950/20 border border-red-500/30 rounded-xl">
-                    <h4 class="text-lg font-black uppercase text-red-300 mb-4"><i class="fa-solid fa-horse-circle-xmark mr-2"></i>Marcar Ejemplares Retirados</h4>
-                    <p class="text-amber-200/70 text-sm mb-4">Haz clic en los botones para marcar/desmarcar retirados. Los caballos retirados NO aparecerán en la pantalla de selección del usuario.</p>
-                    <div id="scratchedButtonsContainer" class="space-y-4"></div>
-                    <button onclick="saveScratchedConfig()" class="danger-btn mt-6 px-6 py-2 rounded-lg text-sm">
-                        <i class="fa-solid fa-save mr-2"></i> Guardar Retirados
-                    </button>
-                </div>
+                <h3 class="text-xl font-black uppercase mb-4 gold-text">Configuración de Carreras y Retirados</h3>
+                <div id="adminRacesConfig" class="space-y-4"></div>
+                <button onclick="saveRaceConfig()" class="gold-btn mt-6 px-6 py-2 rounded-lg">Guardar Configuración</button>
             </div>
 
-            <!-- Tab: Resultados -->
             <div id="tab-resultados" class="admin-content hidden-section glass-card rounded-2xl p-6">
                 <h3 class="text-xl font-black uppercase mb-4 gold-text">Carga de Resultados (Solo Números)</h3>
                 <p class="text-amber-200/70 text-sm mb-4">Separa con coma si hay empate (ej: "3,5" para empate en 1er lugar).</p>
                 <div id="adminResultsConfig" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-                <button onclick="calculateAllScores()" class="gold-btn mt-6 px-6 py-2 rounded-lg text-sm w-full md:w-auto">
-                    <i class="fa-solid fa-calculator mr-2"></i> Procesar Resultados y Puntuar
-                </button>
+                <button onclick="calculateAllScores()" class="gold-btn mt-6 px-6 py-2 rounded-lg">Procesar Resultados y Puntuar</button>
             </div>
 
-            <!-- Tab: Editar -->
             <div id="tab-editar" class="admin-content hidden-section glass-card rounded-2xl p-6">
-                <h3 class="text-xl font-black uppercase mb-4 gold-text">Editar Jugadas de Participantes</h3>
-                <p class="text-amber-200/70 text-sm mb-4">Haz clic en cualquier número para cambiar la selección del participante.</p>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="text-amber-400 text-sm uppercase border-b border-amber-500/30">
-                                <th class="p-3">Nombre</th>
-                                <th class="p-3 text-center">1V</th>
-                                <th class="p-3 text-center">2V</th>
-                                <th class="p-3 text-center">3V</th>
-                                <th class="p-3 text-center">4V</th>
-                                <th class="p-3 text-center">5V</th>
-                                <th class="p-3 text-center">6V</th>
-                                <th class="p-3 text-center">Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody id="editPlayersTableBody" class="text-amber-100 text-sm"></tbody>
-                    </table>
+                <h3 class="text-xl font-black uppercase mb-4 gold-text">Editar Jugada de Participante</h3>
+                <div class="flex gap-4 mb-6">
+                    <input type="text" id="editSearchName" placeholder="Buscar por nombre..." class="input-luxury rounded-lg px-4 py-2 flex-grow">
+                    <button onclick="searchPlayerToEdit()" class="gold-btn px-6 py-2 rounded-lg">Buscar</button>
+                </div>
+                <div id="editPlayerForm" class="hidden-section space-y-4">
+                    <p class="text-amber-400 font-bold text-center">Editando a: <span id="editingPlayerName" class="text-white"></span></p>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="editRacesGrid"></div>
+                    <button onclick="saveEditedPrediction()" class="gold-btn px-6 py-2 rounded-lg w-full">Guardar Cambios</button>
                 </div>
             </div>
 
-            <!-- Tab: PDFs -->
             <div id="tab-pdfs" class="admin-content hidden-section glass-card rounded-2xl p-6">
                 <h3 class="text-xl font-black uppercase mb-4 gold-text">Exportar y Compartir</h3>
-                <div class="mb-6">
-                    <h4 class="text-amber-400 font-bold mb-2">Log para WhatsApp (Copia y Pega)</h4>
-                    <textarea id="whatsappLog" rows="6" class="input-luxury w-full rounded-lg px-4 py-2 font-mono text-xs" readonly></textarea>
-                    <button onclick="copyToClipboard()" class="mt-2 text-amber-400 text-sm underline hover:text-amber-300">Copiar al portapapeles</button>
-                </div>
-                <div class="flex gap-4">
-                    <button onclick="generatePDF()" class="gold-btn px-6 py-3 rounded-lg text-sm flex-1">
-                        <i class="fa-solid fa-file-pdf mr-2"></i> Descargar Ranking en PDF
-                    </button>
-                </div>
-            </div>
-
-            <!-- Tab: Zona Roja -->
-            <div id="tab-roja" class="admin-content hidden-section danger-zone rounded-2xl p-6 pulse-danger">
-                <h3 class="text-2xl font-black uppercase mb-2 danger-text">
-                    <i class="fa-solid fa-triangle-exclamation mr-2"></i> ZONA DE PELIGRO
-                </h3>
-                <p class="text-red-200 text-sm mb-6">⚠️ Las acciones en esta sección son IRREVERSIBLES. Úsalas únicamente para resetear la jornada y empezar de cero.</p>
-
-                <div class="space-y-6">
-                    <div class="bg-red-950/50 border border-red-500/30 rounded-xl p-5">
-                        <h4 class="text-lg font-black uppercase text-red-300 mb-2"><i class="fa-solid fa-user-slash mr-2"></i> Borrar TODOS los Participantes</h4>
-                        <p class="text-red-200/80 text-sm mb-4">Elimina permanentemente todos los jugadores y sus selecciones.</p>
-                        <button onclick="resetAllPlayers()" class="danger-btn px-6 py-3 rounded-lg text-sm"><i class="fa-solid fa-trash-can mr-2"></i> BORRAR TODOS LOS PARTICIPANTES</button>
-                    </div>
-
-                    <div class="bg-red-950/50 border border-red-500/30 rounded-xl p-5">
-                        <h4 class="text-lg font-black uppercase text-red-300 mb-2"><i class="fa-solid fa-rotate-left mr-2"></i> Resetear Resultados</h4>
-                        <p class="text-red-200/80 text-sm mb-4">Limpia los resultados de las 6 carreras válidas.</p>
-                        <button onclick="resetResults()" class="danger-btn px-6 py-3 rounded-lg text-sm"><i class="fa-solid fa-eraser mr-2"></i> LIMPIAR RESULTADOS</button>
-                    </div>
-
-                    <div class="bg-red-950/50 border border-red-500/30 rounded-xl p-5">
-                        <h4 class="text-lg font-black uppercase text-red-300 mb-2"><i class="fa-solid fa-horse-circle-exclamation mr-2"></i> Resetear Retirados</h4>
-                        <p class="text-red-200/80 text-sm mb-4">Quita la marca de "retirado" a todos los ejemplares.</p>
-                        <button onclick="resetScratched()" class="danger-btn px-6 py-3 rounded-lg text-sm"><i class="fa-solid fa-xmark mr-2"></i> LIMPIAR RETIRADOS</button>
-                    </div>
-
-                    <div class="bg-red-950/80 border-2 border-red-600 rounded-xl p-5">
-                        <h4 class="text-xl font-black uppercase text-white mb-2"><i class="fa-solid fa-bomb mr-2"></i> RESETEO TOTAL DE JORNADA</h4>
-                        <p class="text-red-100 text-sm mb-4">Ejecuta TODAS las acciones anteriores. Deja la app como nueva.</p>
-                        <button onclick="fullReset()" class="danger-btn px-8 py-4 rounded-lg text-base bg-red-800 hover:bg-red-700 w-full md:w-auto"><i class="fa-solid fa-skull-crossbones mr-2"></i> RESETEAR JORNADA COMPLETA</button>
-                    </div>
-                </div>
+                <textarea id="whatsappLog" rows="6" class="input-luxury w-full rounded-lg px-4 py-2 font-mono text-xs mb-2" readonly></textarea>
+                <button onclick="copyToClipboard()" class="text-amber-400 text-sm underline">Copiar al portapapeles</button>
+                <button onclick="generatePDF()" class="gold-btn mt-4 px-6 py-3 rounded-lg w-full">Descargar Ranking en PDF</button>
             </div>
         </section>
     </main>
 
-    <!-- Modal para editar -->
-    <div id="editModal" class="hidden-section fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-        <div class="glass-card rounded-2xl p-6 max-w-md w-full">
-            <h3 class="text-xl font-black uppercase gold-text mb-4">Cambiar Selección</h3>
-            <p class="text-amber-200/70 text-sm mb-2">Participante: <span id="editModalPlayer" class="text-amber-400 font-bold"></span></p>
-            <p class="text-amber-200/70 text-sm mb-4">Válida: <span id="editModalRace" class="text-amber-400 font-bold"></span></p>
-            <div id="editModalButtons" class="flex flex-wrap gap-2 justify-center mb-4"></div>
-            <button onclick="closeEditModal()" class="gold-btn w-full px-4 py-2 rounded-lg text-sm">Cerrar</button>
-        </div>
-    </div>
-
-    <!-- JAVASCRIPT COMPLETO -->
     <script>
-        // CONFIGURACIÓN FIREBASE
+        // FIREBASE CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyC0NNnkL85YXPBkQk4aNW3xxZ4dd408X5k",
             authDomain: "polla-hipica-prueba.firebaseapp.com",
@@ -292,14 +199,12 @@
             messagingSenderId: "310867611472",
             appId: "1:310867611472:web:9b4235f8be3e185345e655"
         };
-
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // Variables globales
         let currentPlayer = null;
-        let allPlayers = []; 
-        let appSettings = { betValue: 10, inscripcionesAbiertas: true };
+        let playerEditing = null;
+        let appSettings = { betValue: 10 };
         let raceConfig = {
             1: { count: 8, scratched: [] }, 2: { count: 10, scratched: [] },
             3: { count: 9, scratched: [] }, 4: { count: 12, scratched: [] },
@@ -310,71 +215,37 @@
             3: { first: "", second: "", third: "" }, 4: { first: "", second: "", third: "" },
             5: { first: "", second: "", third: "" }, 6: { first: "", second: "", third: "" }
         };
-        let editModalData = { player: null, race: null };
+        let allPlayers = [];
 
-        // INICIALIZACIÓN
-        document.addEventListener('DOMContentLoaded', () => {
-            activarTiempoReal();
-            renderRaceCountInputs();
-            renderScratchedButtons();
-            renderRacesGrid();
-            renderAdminResultsConfig();
-            console.log("✅ Aplicación inicializada correctamente");
-        });
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Cargar datos de Firebase
+            for (let i = 1; i <= 6; i++) {
+                const snap = await db.collection("races").doc(i.toString()).get();
+                if (snap.exists) raceConfig[i] = snap.data();
+            }
+            for (let i = 1; i <= 6; i++) {
+                const snap = await db.collection("results").doc(i.toString()).get();
+                if (snap.exists) resultsConfig[i] = snap.data();
+            }
+            const settingsSnap = await db.collection("settings").doc("general").get();
+            if (settingsSnap.exists) {
+                appSettings = settingsSnap.data();
+                document.getElementById('betValue').value = appSettings.betValue || 10;
+            }
 
-        // FUNCIONES PRINCIPALES
-        function activarTiempoReal() {
+            // Escuchar jugadores en tiempo real
             db.collection("players").onSnapshot((snapshot) => {
                 allPlayers = [];
-                snapshot.forEach(doc => { allPlayers.push(doc.data()); });
-                eliminarJugadoresIncompletos();
-                updateRankingTables(); 
+                snapshot.forEach(doc => { allPlayers.push({ id: doc.id, ...doc.data() }); });
+                updateRankingTables();
                 generateWhatsappLog();
                 updateAdminAccounting();
-                renderEditPlayersTable();
             });
 
-            for (let i = 1; i <= 6; i++) {
-                db.collection("races").doc(i.toString()).onSnapshot((doc) => {
-                    if (doc.exists) {
-                        raceConfig[i] = doc.data();
-                        renderRacesGrid(); 
-                        renderRaceCountInputs();
-                        renderScratchedButtons();
-                    }
-                });
-            }
-
-            for (let i = 1; i <= 6; i++) {
-                db.collection("results").doc(i.toString()).onSnapshot((doc) => {
-                    if (doc.exists) resultsConfig[i] = doc.data();
-                });
-            }
-
-            db.collection("settings").doc("general").onSnapshot((doc) => {
-                if (doc.exists) {
-                    appSettings = { ...appSettings, ...doc.data() };
-                    document.getElementById('betValue').value = appSettings.betValue || 10;
-                    updateInscripcionesUI();
-                }
-            });
-        }
-
-        async function eliminarJugadoresIncompletos() {
-            const batch = db.batch();
-            let eliminados = 0;
-            allPlayers.forEach(player => {
-                let completas = true;
-                for (let i = 1; i <= 6; i++) {
-                    if (!player.picks || !player.picks[i]) { completas = false; break; }
-                }
-                if (!completas) {
-                    batch.delete(db.collection("players").doc(player.name));
-                    eliminados++;
-                }
-            });
-            if (eliminados > 0) await batch.commit();
-        }
+            renderAdminRacesConfig();
+            renderAdminResultsConfig();
+            calculatePrize();
+        });
 
         function showView(view) {
             document.querySelectorAll('section').forEach(el => el.classList.add('hidden-section'));
@@ -386,328 +257,133 @@
             document.querySelectorAll('.admin-content').forEach(el => el.classList.add('hidden-section'));
             document.getElementById(`tab-${tab}`).classList.remove('hidden-section');
             document.querySelectorAll('.admin-tab').forEach(el => {
-                el.classList.remove('active-tab', 'text-amber-400', 'text-red-400');
+                el.classList.remove('active-tab', 'text-amber-400');
                 el.classList.add('text-amber-200/60');
             });
             const activeBtn = document.querySelector(`.admin-tab[data-tab="${tab}"]`);
             if (activeBtn) {
-                activeBtn.classList.add('active-tab');
-                if (tab === 'roja') activeBtn.classList.add('text-red-400');
-                else { activeBtn.classList.add('text-amber-400'); activeBtn.classList.remove('text-amber-200/60'); }
+                activeBtn.classList.add('active-tab', 'text-amber-400');
+                activeBtn.classList.remove('text-amber-200/60');
             }
-            if (tab === 'editar') renderEditPlayersTable();
-            if (tab === 'carreras') { renderRaceCountInputs(); renderScratchedButtons(); }
         }
 
         async function registerPlayer() {
             const name = document.getElementById('playerName').value.trim();
             if (!name) return alert("Ingresa un nombre");
-            if (!appSettings.inscripcionesAbiertas) return alert("Inscripciones cerradas");
-            
-            currentPlayer = name;
-            const existe = allPlayers.find(p => p.name === name);
-            
-            if (!existe) {
-                await db.collection("players").doc(name).set({
-                    name: name,
+
+            let finalName = name;
+            let counter = 1;
+            while (allPlayers.find(p => p.name === finalName)) {
+                finalName = `${name}_${counter.toString().padStart(2, '0')}`;
+                counter++;
+            }
+
+            if (finalName !== name) {
+                document.getElementById('nameSuggestion').textContent = `Registrado como: ${finalName}`;
+                document.getElementById('nameSuggestion').classList.remove('hidden');
+            }
+
+            currentPlayer = finalName;
+            const existing = allPlayers.find(p => p.name === currentPlayer);
+
+            if (!existing) {
+                await db.collection("players").doc(currentPlayer).set({
+                    name: currentPlayer,
                     picks: {1:"",2:"",3:"",4:"",5:"",6:""},
                     scores: {1:0,2:0,3:0,4:0,5:0,6:0},
                     total: 0
                 });
+            } else {
+                loadPlayerPicks(existing.picks);
             }
-            
+
             document.getElementById('raceSelectionBlock').classList.remove('hidden-section');
             renderRacesGrid();
         }
 
+        function renderRacesGrid() {
+            const grid = document.getElementById('racesGrid');
+            grid.innerHTML = '';
+            for (let i = 1; i <= 6; i++) {
+                const race = raceConfig[i];
+                let buttonsHtml = '';
+                for (let j = 1; j <= race.count; j++) {
+                    if (!race.scratched.includes(j)) {
+                        buttonsHtml += `<button type="button" id="btn-race-${i}-horse-${j}" onclick="selectHorse(${i}, ${j}, this)" class="horse-btn w-10 h-10 rounded-lg border border-amber-500/30 bg-emerald-900/50 text-amber-400 font-bold text-sm">${j}</button>`;
+                    }
+                }
+                grid.innerHTML += `<div class="bg-emerald-950/50 border border-amber-500/20 rounded-xl p-4"><h4 class="font-black uppercase text-amber-400 mb-3 text-center">${i}ª Válida</h4><div class="flex flex-wrap gap-2 justify-center">${buttonsHtml}</div></div>`;
+            }
+        }
+
         async function selectHorse(race, horse, btn) {
-            document.querySelectorAll(`#buttons-race-${race} .horse-btn`).forEach(b => b.classList.remove('selected'));
+            document.querySelectorAll(`#buttons-race-${race} .horse-btn, #buttons-race-${race} button`).forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
-            
+
             if (currentPlayer) {
                 await db.collection("players").doc(currentPlayer).update({[`picks.${race}`]: horse});
             }
         }
 
-        async function submitPredictions() {
+        function loadPlayerPicks(picks) {
+            setTimeout(() => {
+                for (let i = 1; i <= 6; i++) {
+                    if (picks[i]) {
+                        const btn = document.getElementById(`btn-race-${i}-horse-${picks[i]}`);
+                        if (btn) btn.classList.add('selected');
+                    }
+                }
+            }, 100);
+        }
+
+        function submitPredictions() {
             const player = allPlayers.find(p => p.name === currentPlayer);
             for (let i = 1; i <= 6; i++) {
                 if (!player.picks[i]) return alert(`Selecciona la ${i}ª válida`);
             }
             alert("¡Jugada enviada!");
-            currentPlayer = null;
-            document.getElementById('playerName').value = '';
-            document.getElementById('raceSelectionBlock').classList.add('hidden-section');
-            showView('main');
+            showView('ranking');
         }
 
-        function renderRacesGrid() {
-            const grid = document.getElementById('racesGrid');
-            if (!grid) return;
-            grid.innerHTML = '';
-            for (let i = 1; i <= 6; i++) {
-                const race = raceConfig[i];
-                let html = `<div class="bg-emerald-950/50 rounded-lg p-3"><h4 class="font-bold text-amber-400 mb-2">${i}ª Válida</h4><div class="flex flex-wrap gap-1">`;
-                for (let j = 1; j <= race.count; j++) {
-                    if (!race.scratched.includes(j)) {
-                        html += `<button onclick="selectHorse(${i},${j},this)" class="horse-btn w-10 h-10 rounded border border-amber-500/30">${j}</button>`;
-                    }
-                }
-                html += `</div></div>`;
-                grid.innerHTML += html;
-            }
-        }
-
-        // FUNCIONES DEL MODAL (CORREGIDAS)
-        function openEditModal(playerName, race) {
-            console.log("🎯 Abriendo modal:", playerName, "carrera:", race);
-            
-            editModalData = { player: playerName, race: race };
-            
-            const playerEl = document.getElementById('editModalPlayer');
-            const raceEl = document.getElementById('editModalRace');
-            const buttonsEl = document.getElementById('editModalButtons');
-            const modalEl = document.getElementById('editModal');
-            
-            if (!playerEl || !raceEl || !buttonsEl || !modalEl) {
-                console.error("❌ Elementos del modal no encontrados");
-                return;
-            }
-            
-            playerEl.textContent = playerName;
-            raceEl.textContent = race + 'ª Válida';
-            buttonsEl.innerHTML = '';
-            
-            if (!raceConfig[race]) {
-                buttonsEl.innerHTML = '<p class="text-red-400 text-sm">Cargando configuración...</p>';
-                modalEl.classList.remove('hidden-section');
-                return;
-            }
-            
-            const raceData = raceConfig[race];
-            const player = allPlayers.find(p => p.name === playerName);
-            
-            if (!player) {
-                buttonsEl.innerHTML = '<p class="text-red-400 text-sm">Jugador no encontrado</p>';
-                modalEl.classList.remove('hidden-section');
-                return;
-            }
-            
-            const currentPick = player.picks[race];
-            
-            for (let j = 1; j <= raceData.count; j++) {
-                if (!raceData.scratched.includes(j)) {
-                    const isSelected = currentPick == j;
-                    const btnClass = isSelected ? 'selected' : '';
-                    
-                    const btn = document.createElement('button');
-                    btn.className = `horse-btn w-10 h-10 rounded-lg border border-amber-500/30 bg-emerald-900/50 text-amber-400 font-bold text-sm flex items-center justify-center ${btnClass}`;
-                    btn.textContent = j;
-                    btn.onclick = function() { saveEditSelection(j); };
-                    
-                    buttonsEl.appendChild(btn);
-                }
-            }
-            
-            modalEl.classList.remove('hidden-section');
-            console.log("✅ Modal abierto");
-        }
-
-        async function saveEditSelection(horse) {
-            const { player, race } = editModalData;
-            
-            if (!player || !race) {
-                alert("Error: No hay datos válidos");
-                return;
-            }
-            
-            try {
-                await db.collection("players").doc(player).update({
-                    [`picks.${race}`]: horse.toString()
-                });
-                
-                closeEditModal();
-                alert(`✅ Actualizado: ${player} - ${race}ª Válida: #${horse}`);
-            } catch (error) {
-                console.error("Error:", error);
-                alert("Error al guardar: " + error.message);
-            }
-        }
-
-        function closeEditModal() {
-            document.getElementById('editModal').classList.add('hidden-section');
-            editModalData = { player: null, race: null };
-        }
-
-        function renderEditPlayersTable() {
-            const tbody = document.getElementById('editPlayersTableBody');
-            if (!tbody) return;
-            
-            if (allPlayers.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-amber-200/70">No hay participantes</td></tr>';
-                return;
-            }
-            
-            const sortedPlayers = [...allPlayers].sort((a, b) => a.name.localeCompare(b.name));
-            tbody.innerHTML = '';
-            
-            sortedPlayers.forEach(player => {
-                let row = `<tr class="border-b border-amber-500/10 hover:bg-amber-500/5">
-                    <td class="p-3 font-bold text-amber-400">${player.name}</td>`;
-                
-                for (let i = 1; i <= 6; i++) {
-                    const pick = player.picks[i] || '-';
-                    row += `<td class="p-3 text-center">
-                        <button onclick="openEditModal('${player.name}', ${i})" 
-                            class="horse-btn w-8 h-8 rounded border border-amber-500/30 bg-emerald-900/50 text-amber-400 font-bold text-xs">
-                            ${pick}
-                        </button>
-                    </td>`;
-                }
-                
-                row += `<td class="p-3 text-center">
-                    <button onclick="deletePlayer('${player.name}')" class="text-red-400 hover:text-red-300 text-xs">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </td></tr>`;
-                
-                tbody.innerHTML += row;
-            });
-        }
-
-        async function deletePlayer(playerName) {
-            if (!confirm(`¿Eliminar a ${playerName}?`)) return;
-            await db.collection("players").doc(playerName).delete();
-            alert(`${playerName} eliminado`);
-        }
-
-        function updateRankingTables() {
-            const container = document.getElementById('rankingTablesContainer');
-            if (!container) return;
-            
-            const sorted = [...allPlayers].sort((a,b) => b.total - a.total);
-            let html = '<div class="glass-card rounded-2xl p-6"><h3 class="text-xl font-black uppercase gold-text mb-4">Ranking</h3>';
-            
-            sorted.forEach((p, i) => {
-                html += `<div class="flex justify-between p-2 border-b border-amber-500/20">
-                    <span>${i+1}. ${p.name}</span>
-                    <span class="text-amber-400 font-bold">${p.total} pts</span>
-                </div>`;
-            });
-            
-            html += '</div>';
-            container.innerHTML = html;
-        }
-
-        function generateWhatsappLog() {
-            const sorted = [...allPlayers].sort((a,b) => b.total - a.total);
-            let log = "🏆 Polla Hípica\n";
-            sorted.forEach(p => {
-                log += `${p.name}: ${p.total} pts\n`;
-            });
-            const textarea = document.getElementById('whatsappLog');
-            if (textarea) textarea.value = log;
-        }
-
-        function updateAdminAccounting() {
-            const total = allPlayers.length * (appSettings.betValue || 10);
-            const totalEl = document.getElementById('totalCollected');
-            const prizeEl = document.getElementById('prizePool');
-            if (totalEl) totalEl.value = `$ ${total.toFixed(2)}`;
-            if (prizeEl) prizeEl.value = `$ ${(total * 0.80).toFixed(2)}`;
-            updateInscripcionesUI();
-        }
-
-        function updateInscripcionesUI() {
-            const statusEl = document.getElementById('inscripcionesStatus');
-            const btnEl = document.getElementById('btnToggleInscripciones');
-            const countEl = document.getElementById('validPlayersCount');
-            
-            if (statusEl) {
-                statusEl.textContent = appSettings.inscripcionesAbiertas ? 'ABIERTAS' : 'CERRADAS';
-                statusEl.className = appSettings.inscripcionesAbiertas ? 'text-green-400' : 'text-red-400';
-            }
-            if (btnEl) {
-                btnEl.innerHTML = appSettings.inscripcionesAbiertas ? 
-                    '<i class="fa-solid fa-lock mr-2"></i> CERRAR INSCRIPCIONES' : 
-                    '<i class="fa-solid fa-lock-open mr-2"></i> ABRIR INSCRIPCIONES';
-            }
-            if (countEl) countEl.textContent = allPlayers.length;
-        }
-
-        function renderRaceCountInputs() {
-            const container = document.getElementById('raceCountInputs');
-            if (!container) return;
-            container.innerHTML = '';
-            for (let i = 1; i <= 6; i++) {
-                container.innerHTML += `
-                    <div class="bg-emerald-950/50 border border-amber-500/20 rounded-lg p-3">
-                        <label class="text-amber-400 font-bold text-sm block mb-2">${i}ª Válida</label>
-                        <input type="number" id="race-count-input-${i}" value="${raceConfig[i].count}" min="4" max="16" 
-                            class="input-luxury w-full rounded px-3 py-2 text-center font-bold text-lg">
-                        <span class="text-amber-200/60 text-xs block text-center mt-1">ejemplares</span>
-                    </div>
-                `;
-            }
-        }
-
-        function renderScratchedButtons() {
-            const container = document.getElementById('scratchedButtonsContainer');
+        function renderAdminRacesConfig() {
+            const container = document.getElementById('adminRacesConfig');
             if (!container) return;
             container.innerHTML = '';
             for (let i = 1; i <= 6; i++) {
                 const race = raceConfig[i];
-                let buttonsHtml = '';
+                let scratchedChecks = '';
                 for (let j = 1; j <= race.count; j++) {
-                    const isScratched = race.scratched.includes(j);
-                    const btnClass = isScratched ? 'bg-red-600 border-red-400 text-white' : 'bg-emerald-900/50 border-amber-500/30 text-amber-400';
-                    buttonsHtml += `<button onclick="toggleScratchButton(${i}, ${j})" id="scratch-btn-${i}-${j}" class="horse-btn w-10 h-10 rounded-lg border ${btnClass} font-bold text-sm">${j}</button>`;
+                    const isScratched = race.scratched.includes(j) ? 'checked' : '';
+                    scratchedChecks += `<label class="inline-flex items-center mr-3 mb-2 cursor-pointer"><input type="checkbox" class="form-checkbox text-amber-500" onchange="toggleScratch(${i}, ${j}, this.checked)" ${isScratched}><span class="ml-2 text-amber-100 text-sm">#${j}</span></label>`;
                 }
-                container.innerHTML += `
-                    <div class="bg-emerald-950/30 border border-amber-500/20 rounded-lg p-4">
-                        <h5 class="font-black uppercase text-amber-400 mb-3 text-sm">${i}ª Válida - Retirados</h5>
-                        <div class="flex flex-wrap gap-2">${buttonsHtml}</div>
-                    </div>
-                `;
+                container.innerHTML += `<div class="border border-amber-500/20 rounded-lg p-4 bg-emerald-950/30"><div class="flex items-center gap-4 mb-3"><label class="text-amber-400 font-bold w-32">${i}ª Válida:</label><input type="number" value="${race.count}" min="4" max="16" class="input-luxury w-20 rounded px-2 py-1 text-center" onchange="updateRaceCount(${i}, this.value)"><span class="text-amber-200/60 text-sm">ejemplares</span></div><div class="pl-32"><p class="text-amber-400 text-xs font-bold uppercase mb-2">Retirados:</p><div class="flex flex-wrap">${scratchedChecks}</div></div></div>`;
             }
         }
 
-        function toggleScratchButton(race, horse) {
-            const idx = raceConfig[race].scratched.indexOf(horse);
-            if (idx > -1) raceConfig[race].scratched.splice(idx, 1);
-            else raceConfig[race].scratched.push(horse);
-            renderScratchedButtons();
+        function updateRaceCount(race, count) {
+            raceConfig[race].count = parseInt(count);
+            raceConfig[race].scratched = [];
+            renderAdminRacesConfig();
+            renderRacesGrid();
         }
 
-        async function saveRaceCounts() {
-            const batch = db.batch();
-            for (let i = 1; i <= 6; i++) {
-                const newCount = parseInt(document.getElementById(`race-count-input-${i}`).value);
-                if (newCount >= 4 && newCount <= 16) {
-                    raceConfig[i].count = newCount;
-                    raceConfig[i].scratched = [];
-                    batch.set(db.collection("races").doc(i.toString()), raceConfig[i]);
-                }
+        function toggleScratch(race, horse, isChecked) {
+            if (isChecked) {
+                if (!raceConfig[race].scratched.includes(horse)) raceConfig[race].scratched.push(horse);
+            } else {
+                raceConfig[race].scratched = raceConfig[race].scratched.filter(h => h !== horse);
             }
-            await batch.commit();
-            renderScratchedButtons();
-            alert("✅ Cantidades actualizadas");
+            renderRacesGrid();
         }
 
-        async function saveScratchedConfig() {
+        async function saveRaceConfig() {
             const batch = db.batch();
             for (let i = 1; i <= 6; i++) {
                 batch.set(db.collection("races").doc(i.toString()), raceConfig[i]);
             }
             await batch.commit();
-            alert("✅ Retirados guardados");
-        }
-
-        async function toggleInscripciones() {
-            await db.collection("settings").doc("general").set({ 
-                ...appSettings, 
-                inscripcionesAbiertas: !appSettings.inscripcionesAbiertas 
-            }, { merge: true });
+            alert("✅ Guardado");
+            renderRacesGrid();
         }
 
         function renderAdminResultsConfig() {
@@ -716,25 +392,25 @@
             container.innerHTML = '';
             for (let i = 1; i <= 6; i++) {
                 const res = resultsConfig[i];
-                container.innerHTML += `<div class="border border-amber-500/20 rounded-lg p-4 bg-emerald-950/30"><h4 class="font-black uppercase text-amber-400 mb-3 text-center">${i}ª Válida</h4><div class="space-y-2"><input type="text" id="res-${i}-1" value="${res.first}" placeholder="1er Lugar" class="input-luxury w-full rounded px-3 py-2 text-center"><input type="text" id="res-${i}-2" value="${res.second}" placeholder="2do Lugar" class="input-luxury w-full rounded px-3 py-2 text-center"><input type="text" id="res-${i}-3" value="${res.third}" placeholder="3er Lugar" class="input-luxury w-full rounded px-3 py-2 text-center"></div></div>`;
+                container.innerHTML += `<div class="border border-amber-500/20 rounded-lg p-4 bg-emerald-950/30"><h4 class="font-black uppercase text-amber-400 mb-3 text-center">${i}ª Válida</h4><div class="space-y-3"><div><label class="text-amber-200 text-xs uppercase font-bold block mb-1">1er</label><input type="text" id="res-${i}-1" value="${res.first}" placeholder="3 o 3,5" class="input-luxury w-full rounded px-3 py-2 text-center font-bold"></div><div><label class="text-amber-200 text-xs uppercase font-bold block mb-1">2do</label><input type="text" id="res-${i}-2" value="${res.second}" placeholder="7" class="input-luxury w-full rounded px-3 py-2 text-center font-bold"></div><div><label class="text-amber-200 text-xs uppercase font-bold block mb-1">3er</label><input type="text" id="res-${i}-3" value="${res.third}" placeholder="2" class="input-luxury w-full rounded px-3 py-2 text-center font-bold"></div></div></div>`;
             }
         }
 
         async function calculateAllScores() {
-            const batchResultados = db.batch();
+            const batch = db.batch();
             for (let i = 1; i <= 6; i++) {
                 resultsConfig[i] = {
                     first: document.getElementById(`res-${i}-1`).value,
                     second: document.getElementById(`res-${i}-2`).value,
                     third: document.getElementById(`res-${i}-3`).value
                 };
-                batchResultados.set(db.collection("results").doc(i.toString()), resultsConfig[i]);
+                batch.set(db.collection("results").doc(i.toString()), resultsConfig[i]);
             }
-            await batchResultados.commit();
+            await batch.commit();
 
-            const batchPuntajes = db.batch();
+            const updateBatch = db.batch();
             allPlayers.forEach(player => {
-                player.scores = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0};
+                player.scores = {1:0,2:0,3:0,4:0,5:0,6:0};
                 player.total = 0;
 
                 for (let race = 1; race <= 6; race++) {
@@ -751,7 +427,7 @@
                     let effectivePick = pick;
                     while (raceConfig[race].scratched.includes(effectivePick)) {
                         effectivePick++;
-                        if (effectivePick > raceConfig[race].count) effectivePick = 1; 
+                        if (effectivePick > raceConfig[race].count) effectivePick = 1;
                     }
 
                     let points = 0;
@@ -765,13 +441,10 @@
                     player.total += points;
                 }
 
-                batchPuntajes.update(db.collection("players").doc(player.name), { 
-                    scores: player.scores, 
-                    total: player.total 
-                });
+                updateBatch.update(db.collection("players").doc(player.name), { scores: player.scores, total: player.total });
             });
 
-            await batchPuntajes.commit();
+            await updateBatch.commit();
             alert("✅ Resultados procesados");
             updateRankingTables();
             generateWhatsappLog();
@@ -782,77 +455,125 @@
             return str.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
         }
 
+        function updateRankingTables() {
+            const sortedPlayers = [...allPlayers].sort((a, b) => b.total - a.total);
+
+            const transBody = document.getElementById('transparencyTableBody');
+            if (transBody) {
+                transBody.innerHTML = '';
+                allPlayers.forEach(p => {
+                    transBody.innerHTML += `<tr class="border-b border-amber-500/10"><td class="p-3 font-bold text-amber-400">${p.name}</td><td class="p-3 text-center">${p.picks[1]||'-'}</td><td class="p-3 text-center">${p.picks[2]||'-'}</td><td class="p-3 text-center">${p.picks[3]||'-'}</td><td class="p-3 text-center">${p.picks[4]||'-'}</td><td class="p-3 text-center">${p.picks[5]||'-'}</td><td class="p-3 text-center">${p.picks[6]||'-'}</td></tr>`;
+                });
+            }
+
+            const rankBody = document.getElementById('rankingTableBody');
+            if (rankBody) {
+                rankBody.innerHTML = '';
+                sortedPlayers.forEach((p, index) => {
+                    const isTop3 = index < 3 ? 'bg-amber-500/10 font-bold text-amber-400' : '';
+                    rankBody.innerHTML += `<tr class="border-b border-amber-500/10 ${isTop3}"><td class="p-3">${index+1}. ${p.name}</td><td class="p-3 text-center">${p.picks[1]||'-'}</td><td class="p-3 text-center">${p.scores[1]||0}</td><td class="p-3 text-center">${p.picks[2]||'-'}</td><td class="p-3 text-center">${p.scores[2]||0}</td><td class="p-3 text-center">${p.picks[3]||'-'}</td><td class="p-3 text-center">${p.scores[3]||0}</td><td class="p-3 text-center">${p.picks[4]||'-'}</td><td class="p-3 text-center">${p.scores[4]||0}</td><td class="p-3 text-center">${p.picks[5]||'-'}</td><td class="p-3 text-center">${p.scores[5]||0}</td><td class="p-3 text-center">${p.picks[6]||'-'}</td><td class="p-3 text-center">${p.scores[6]||0}</td><td class="p-3 text-center font-black text-amber-400">${p.total}</td></tr>`;
+                });
+            }
+        }
+
+        // EDITAR JUGADA - SISTEMA DE BÚSQUEDA (ORIGINAL FUNCIONAL)
+        function searchPlayerToEdit() {
+            const name = document.getElementById('editSearchName').value.trim();
+            if (!name) return alert("Ingresa un nombre para buscar");
+            
+            playerEditing = allPlayers.find(p => p.name.toLowerCase() === name.toLowerCase());
+            
+            if (playerEditing) {
+                document.getElementById('editPlayerForm').classList.remove('hidden-section');
+                document.getElementById('editingPlayerName').textContent = playerEditing.name;
+                
+                const grid = document.getElementById('editRacesGrid');
+                if (!grid) {
+                    console.error("No se encontró editRacesGrid");
+                    return;
+                }
+                
+                grid.innerHTML = '';
+                for (let i = 1; i <= 6; i++) {
+                    const race = raceConfig[i];
+                    if (!race) continue;
+                    
+                    let buttonsHtml = '';
+                    for (let j = 1; j <= race.count; j++) {
+                        if (!race.scratched.includes(j)) {
+                            const isSelected = playerEditing.picks[i] == j;
+                            const activeClasses = isSelected ? 'selected' : '';
+                            buttonsHtml += `<button type="button" onclick="selectEditHorse(${i}, ${j}, this)" class="horse-btn w-10 h-10 rounded-lg border border-amber-500/30 bg-emerald-900/50 text-amber-400 font-bold text-sm ${activeClasses}">${j}</button>`;
+                        }
+                    }
+                    grid.innerHTML += `<div class="bg-emerald-950/30 border border-amber-500/20 rounded-lg p-3"><label class="text-amber-400 text-xs font-black uppercase block mb-2 text-center">${i}ª Válida</label><div class="flex flex-wrap gap-2 justify-center">${buttonsHtml}</div></div>`;
+                }
+            } else {
+                alert("Jugador no encontrado");
+            }
+        }
+
+        function selectEditHorse(race, horse, btn) {
+            const parent = btn.parentElement;
+            const raceButtons = parent.querySelectorAll('.horse-btn');
+            raceButtons.forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            if (playerEditing) playerEditing.picks[race] = horse;
+        }
+
+        async function saveEditedPrediction() {
+            if (!playerEditing) {
+                alert("No hay jugador seleccionado");
+                return;
+            }
+            await db.collection("players").doc(playerEditing.name).update({ picks: playerEditing.picks });
+            alert("✅ Cambios guardados");
+            document.getElementById('editPlayerForm').classList.add('hidden-section');
+            document.getElementById('editSearchName').value = '';
+            playerEditing = null;
+        }
+
+        function generateWhatsappLog() {
+            const sorted = [...allPlayers].sort((a,b) => b.total - a.total);
+            let log = "🏆 Polla Hípica\n";
+            sorted.forEach(p => {
+                log += `${p.name}: ${p.total} pts\n`;
+            });
+            const textarea = document.getElementById('whatsappLog');
+            if (textarea) textarea.value = log;
+        }
+
         function copyToClipboard() {
-            document.getElementById("whatsappLog").select();
-            document.execCommand("copy");
-            alert("Copiado");
+            const textarea = document.getElementById("whatsappLog");
+            if (textarea) {
+                textarea.select();
+                document.execCommand("copy");
+                alert("Copiado");
+            }
         }
 
         function generatePDF() {
             const element = document.getElementById('view-ranking');
-            const opt = { margin: 0.5, filename: 'Ranking.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, backgroundColor: '#022c22' }, jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' } };
-            html2pdf().set(opt).from(element).save();
+            if (element) {
+                html2pdf().from(element).save();
+            }
         }
 
         async function updateBetValue(val) {
             appSettings.betValue = parseFloat(val) || 0;
             await db.collection("settings").doc("general").set({ betValue: appSettings.betValue }, { merge: true });
+            calculatePrize();
         }
 
-        async function resetAllPlayers() {
-            if (!confirm("¿Borrar todos?")) return;
-            const snap = await db.collection("players").get();
-            const batch = db.batch();
-            snap.forEach(doc => batch.delete(doc.ref));
-            await batch.commit();
-            alert("Eliminados");
+        function updateAdminAccounting() {
+            const total = allPlayers.length * (appSettings.betValue || 10);
+            const totalEl = document.getElementById('totalCollected');
+            const prizeEl = document.getElementById('prizePool');
+            if (totalEl) totalEl.value = `$ ${total.toFixed(2)}`;
+            if (prizeEl) prizeEl.value = `$ ${(total * 0.80).toFixed(2)}`;
         }
 
-        async function resetResults() {
-            if (!confirm("¿Resetear resultados?")) return;
-            const batch = db.batch();
-            for (let i = 1; i <= 6; i++) batch.set(db.collection("results").doc(i.toString()), { first: "", second: "", third: "" });
-            allPlayers.forEach(p => batch.update(db.collection("players").doc(p.name), { scores: {1:0,2:0,3:0,4:0,5:0,6:0}, total: 0 }));
-            await batch.commit();
-            alert("Resultados reseteados");
-        }
-
-        async function resetScratched() {
-            if (!confirm("¿Quitar retirados?")) return;
-            const batch = db.batch();
-            for (let i = 1; i <= 6; i++) { raceConfig[i].scratched = []; batch.set(db.collection("races").doc(i.toString()), raceConfig[i]); }
-            await batch.commit();
-            alert("Retirados eliminados");
-        }
-
-        async function fullReset() {
-            if (!confirm("RESETEO TOTAL. ¿Continuar?")) return;
-            const code = prompt("Escribe SI para confirmar:");
-            if (code !== "SI") return alert("Cancelado");
-            
-            const snapPlayers = await db.collection("players").get();
-            const batch1 = db.batch();
-            snapPlayers.forEach(doc => batch1.delete(doc.ref));
-            await batch1.commit();
-            
-            const batch2 = db.batch();
-            for (let i = 1; i <= 6; i++) { 
-                batch2.set(db.collection("results").doc(i.toString()), { first: "", second: "", third: "" }); 
-                raceConfig[i].scratched = []; 
-                batch2.set(db.collection("races").doc(i.toString()), raceConfig[i]); 
-            }
-            await db.collection("settings").doc("general").set({ betValue: 10, inscripcionesAbiertas: true });
-            await batch2.commit();
-            alert("Jornada reseteada");
-        }
-
-        // DEBUG
-        console.log("✅ Script cargado correctamente");
-        console.log("Funciones disponibles:", {
-            openEditModal: typeof openEditModal,
-            saveEditSelection: typeof saveEditSelection,
-            closeEditModal: typeof closeEditModal
-        });
+        function calculatePrize() { updateAdminAccounting(); }
     </script>
 </body>
 </html>
