@@ -218,7 +218,6 @@
         let allPlayers = [];
 
         document.addEventListener('DOMContentLoaded', async () => {
-            // Cargar datos de Firebase
             for (let i = 1; i <= 6; i++) {
                 const snap = await db.collection("races").doc(i.toString()).get();
                 if (snap.exists) raceConfig[i] = snap.data();
@@ -233,7 +232,6 @@
                 document.getElementById('betValue').value = appSettings.betValue || 10;
             }
 
-            // Escuchar jugadores en tiempo real
             db.collection("players").onSnapshot((snapshot) => {
                 allPlayers = [];
                 snapshot.forEach(doc => { allPlayers.push({ id: doc.id, ...doc.data() }); });
@@ -476,7 +474,6 @@
             }
         }
 
-        // EDITAR JUGADA - SISTEMA DE BÚSQUEDA (ORIGINAL FUNCIONAL)
         function searchPlayerToEdit() {
             const name = document.getElementById('editSearchName').value.trim();
             if (!name) return alert("Ingresa un nombre para buscar");
@@ -552,10 +549,52 @@
             }
         }
 
-        function generatePDF() {
+        // FUNCIÓN PDF CORREGIDA - OPCIÓN 1 (RECOMENDADA)
+        async function generatePDF() {
             const element = document.getElementById('view-ranking');
-            if (element) {
-                html2pdf().from(element).save();
+            if (!element) {
+                alert("Error: No se encontró la vista de ranking");
+                return;
+            }
+
+            // Mostrar temporalmente el ranking si está oculto
+            const wasHidden = element.classList.contains('hidden-section');
+            if (wasHidden) {
+                element.classList.remove('hidden-section');
+                // Forzar reflow
+                element.offsetHeight;
+                // Pequeña espera para que se renderice
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+
+            try {
+                const opt = {
+                    margin: 0.5,
+                    filename: 'Ranking_Polla_Hipica.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { 
+                        scale: 2, 
+                        useCORS: true,
+                        logging: false,
+                        backgroundColor: '#022c22'
+                    },
+                    jsPDF: { 
+                        unit: 'in', 
+                        format: 'letter', 
+                        orientation: 'landscape' 
+                    }
+                };
+
+                await html2pdf().set(opt).from(element).save();
+                alert("✅ PDF generado correctamente");
+            } catch (error) {
+                console.error("Error generando PDF:", error);
+                alert("❌ Error al generar PDF: " + error.message);
+            } finally {
+                // Restaurar estado oculto si era necesario
+                if (wasHidden) {
+                    element.classList.add('hidden-section');
+                }
             }
         }
 
