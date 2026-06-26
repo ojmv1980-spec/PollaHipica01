@@ -9,58 +9,121 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        emerald: { 950: '#022c22', 900: '#064e3b', 800: '#065f46' },
-                        amber: { 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706' }
+                        navy: { 
+                            950: '#05081a', 
+                            900: '#0a0e27', 
+                            800: '#111538',
+                            700: '#1a1f3a'
+                        },
+                        neon: { 
+                            cyan: '#00d4ff', 
+                            fuchsia: '#ff00ff', 
+                            green: '#00ff88',
+                            gold: '#ffd700',
+                            purple: '#a855f7'
+                        },
+                        mustard: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706'
+                        }
                     },
-                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                    fontFamily: { 
+                        display: ['Orbitron', 'sans-serif'],
+                        sans: ['Rajdhani', 'sans-serif'] 
+                    }
                 }
             }
         }
     </script>
     <style>
-        /* FONDO TEMÁTICO HIPÓDROMO CON GRADIENTE VIBRANTE */
+        /* FONDO FUTURISTA CON PARTÍCULAS */
         body {
-            background: linear-gradient(135deg, #022c22 0%, #064e3b 25%, #065f46 50%, #022c22 75%, #011a14 100%);
+            background: linear-gradient(135deg, #05081a 0%, #0a0e27 25%, #111538 50%, #0a0e27 75%, #110a24 100%);
             background-attachment: fixed;
-            color: #fbbf24;
-            font-family: 'Inter', sans-serif;
+            color: #e0e6ed;
+            font-family: 'Rajdhani', sans-serif;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        /* GLASSMORPHISM ULTRA TRANSPARENTE */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #00d4ff, transparent),
+                radial-gradient(2px 2px at 40px 70px, #ff00ff, transparent),
+                radial-gradient(1px 1px at 90px 40px, #00ff88, transparent),
+                radial-gradient(2px 2px at 160px 120px, #00d4ff, transparent),
+                radial-gradient(1px 1px at 230px 80px, #ff00ff, transparent);
+            background-repeat: repeat;
+            background-size: 300px 200px;
+            animation: sparkle 20s linear infinite;
+            opacity: 0.2;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes sparkle {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(200px); }
+        }
+
+        /* GLASSMORPHISM FUTURISTA */
         .glass-card {
-            background: rgba(6, 78, 59, 0.08);
+            background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid rgba(251, 191, 36, 0.15);
-            box-shadow: 0 8px 32px 0 rgba(251, 191, 36, 0.08);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
         }
 
         .glass-card:hover {
-            background: rgba(6, 78, 59, 0.12);
-            border-color: rgba(251, 191, 36, 0.25);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(0, 212, 255, 0.4);
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.15);
         }
 
-        /* BOTONES DORADOS CON EFECTO PREMIUM */
+        /* BOTONES NEÓN CON EFECTO PREMIUM */
         .gold-btn {
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
-            color: #022c22;
-            font-weight: 900;
+            background: linear-gradient(135deg, #00d4ff 0%, #ff00ff 50%, #a855f7 100%);
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.1em;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3), 0 0 20px rgba(255, 0, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gold-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .gold-btn:hover::before {
+            left: 100%;
         }
 
         .gold-btn:hover {
             transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.5);
-            filter: brightness(1.1);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.5), 0 0 40px rgba(255, 0, 255, 0.4);
+            filter: brightness(1.15);
         }
 
         .gold-btn:active {
@@ -68,73 +131,131 @@
         }
 
         .gold-text {
-            color: #fbbf24;
-            text-shadow: 0 2px 10px rgba(251, 191, 36, 0.3);
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(135deg, #00d4ff 0%, #ff00ff 50%, #00ff88 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             font-weight: 900;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.08em;
+            text-shadow: 0 0 40px rgba(0, 212, 255, 0.3);
         }
 
-        /* INPUTS ULTRA TRANSPARENTES */
+        /* INPUTS FUTURISTAS */
         .input-luxury {
-            background: rgba(2, 44, 34, 0.3);
-            border: 1px solid rgba(251, 191, 36, 0.2);
-            color: #fbbf24;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: #e0e6ed;
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
+            font-family: 'Rajdhani', sans-serif;
         }
 
         .input-luxury:focus {
-            background: rgba(2, 44, 34, 0.5);
-            border-color: #fbbf24;
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
+            background: rgba(0, 0, 0, 0.6);
+            border-color: #00d4ff;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4), 0 0 30px rgba(255, 0, 255, 0.2);
             outline: none;
         }
 
         .input-luxury::placeholder {
-            color: rgba(251, 191, 36, 0.4);
+            color: rgba(136, 146, 176, 0.6);
         }
 
         /* BOTONES DE CABALLOS */
         .horse-btn {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            background: rgba(6, 78, 59, 0.2);
+            background: rgba(0, 212, 255, 0.08);
             backdrop-filter: blur(5px);
+            border-color: rgba(0, 212, 255, 0.3) !important;
+            color: #00d4ff !important;
         }
 
         .horse-btn:hover:not(.selected) {
-            background: rgba(251, 191, 36, 0.2);
+            background: rgba(255, 0, 255, 0.2);
             transform: scale(1.1);
-            box-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.4);
+            border-color: #ff00ff !important;
+            color: #ff00ff !important;
         }
 
         .horse-btn.selected {
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-            border-color: #fbbf24;
-            color: #022c22;
+            background: linear-gradient(135deg, #00d4ff 0%, #ff00ff 100%);
+            border-color: #00d4ff !important;
+            color: #fff !important;
             font-weight: 900;
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.6), 0 0 30px rgba(255, 0, 255, 0.4);
             transform: scale(1.15);
         }
 
         /* HEADER ULTRA TRANSLÚCIDO */
         header {
-            background: rgba(2, 44, 34, 0.6);
+            background: rgba(5, 8, 26, 0.85);
             backdrop-filter: blur(30px) saturate(200%);
             -webkit-backdrop-filter: blur(30px) saturate(200%);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2) !important;
+        }
+
+        /* LÍNEAS RESPLANDECIENTES ANIMADAS */
+        h1, h2, h3, h4 {
+            position: relative;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        h1::after, h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00d4ff, #ff00ff, transparent);
+            animation: glow-line 3s ease-in-out infinite;
+        }
+
+        h1::after {
+            width: 80%;
+            max-width: 300px;
+        }
+
+        h2::after {
+            width: 60%;
+            max-width: 200px;
+            animation-delay: 1.5s;
+        }
+
+        @keyframes glow-line {
+            0%, 100% { 
+                opacity: 0.5; 
+                box-shadow: 0 0 10px #00d4ff; 
+            }
+            50% { 
+                opacity: 1; 
+                box-shadow: 0 0 30px #00d4ff, 0 0 60px #ff00ff; 
+            }
         }
 
         /* TABS */
         .active-tab {
-            border-bottom: 2px solid #fbbf24;
-            color: #fbbf24;
-            text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+            border-bottom: 2px solid #00d4ff !important;
+            color: #00d4ff !important;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
+        }
+
+        .admin-tab {
+            color: #8892b0 !important;
+            transition: all 0.3s ease;
+        }
+
+        .admin-tab:hover {
+            color: #ff00ff !important;
         }
 
         /* SCROLLBAR PERSONALIZADO */
         ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: rgba(2, 44, 34, 0.3); }
+        ::-webkit-scrollbar-track { background: rgba(5, 8, 26, 0.5); }
         ::-webkit-scrollbar-thumb { 
-            background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+            background: linear-gradient(135deg, #00d4ff 0%, #ff00ff 100%);
             border-radius: 4px;
         }
 
@@ -157,70 +278,115 @@
         }
 
         table tbody tr:hover {
-            background: rgba(251, 191, 36, 0.1);
+            background: rgba(0, 212, 255, 0.08) !important;
             transform: scale(1.01);
+        }
+
+        /* CHECKS VERDES CON RESPLANDOR */
+        .check-icon {
+            color: #00ff88;
+            font-weight: bold;
+            font-size: 1.2rem;
+            display: inline-block;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
+            animation: check-glow 2s ease-in-out infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes check-glow {
+            0%, 100% { 
+                opacity: 1; 
+                text-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 0.7; 
+                text-shadow: 0 0 20px rgba(0, 255, 136, 1), 0 0 30px rgba(0, 255, 136, 0.8);
+                transform: scale(1.1);
+            }
+        }
+
+        /* REGLAMENTO CON CHECKS */
+        .rules-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .rules-list li:last-child {
+            border-bottom: none;
         }
 
         /* ZONA ROJA */
         .danger-zone {
             background: rgba(127, 29, 29, 0.15);
             backdrop-filter: blur(20px);
-            border: 2px solid rgba(220, 38, 38, 0.4);
+            border: 2px solid rgba(255, 0, 100, 0.4);
         }
 
         .danger-btn {
-            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            background: linear-gradient(135deg, #ff0064 0%, #991b1b 100%);
             color: #fff;
-            font-weight: 900;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             transition: all 0.3s ease;
-            border: 2px solid rgba(252, 165, 165, 0.3);
+            border: 2px solid rgba(255, 0, 100, 0.3);
         }
 
         .danger-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(220, 38, 38, 0.4);
-            border-color: rgba(252, 165, 165, 0.6);
+            box-shadow: 0 10px 25px rgba(255, 0, 100, 0.4);
+            border-color: rgba(255, 0, 100, 0.6);
         }
 
-        /* EFECTO BRILLO EN TÍTULOS */
-        h1, h2, h3, h4 {
-            position: relative;
+        /* TABLAS FUTURISTAS */
+        table thead tr {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(255, 0, 255, 0.15)) !important;
+            border-bottom: 2px solid #00d4ff !important;
         }
 
-        h1::after, h2::after, h3::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #fbbf24, transparent);
+        table thead th {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d4ff !important;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.8rem;
         }
 
         /* RESPONSIVE */
         @media (max-width: 768px) {
             .glass-card {
-                background: rgba(6, 78, 59, 0.15);
+                background: rgba(255, 255, 255, 0.05);
+            }
+            h1 { font-size: 1.5rem !important; }
+            h2 { font-size: 1.2rem !important; }
+        }
+
+        /* Reducir animaciones si el usuario lo prefiere */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
             }
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
 </head>
 <body class="font-sans min-h-screen flex flex-col">
 
-    <header class="sticky top-0 z-50 border-b border-amber-500/20">
+    <header class="sticky top-0 z-50 border-b border-neon-cyan/20">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <i class="fa-solid fa-horse-head text-3xl text-amber-400"></i>
+                <i class="fa-solid fa-horse-head text-3xl text-neon-cyan" style="filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.6));"></i>
                 <h1 class="text-2xl md:text-3xl font-black uppercase tracking-wider gold-text">Polla Hípica</h1>
             </div>
             <nav class="flex gap-4 md:gap-6">
-                <button onclick="showView('main')" class="font-bold uppercase text-sm hover:text-amber-300 transition-colors">Inicio</button>
-                <button onclick="showView('ranking')" class="font-bold uppercase text-sm hover:text-amber-300 transition-colors">Ranking</button>
-                <button onclick="showView('admin')" class="font-bold uppercase text-sm text-amber-400 border border-amber-500/50 px-3 py-1 rounded hover:bg-amber-500/10 transition-colors">
+                <button onclick="showView('main')" class="font-bold uppercase text-sm hover:text-neon-fuchsia transition-colors text-neon-cyan">Inicio</button>
+                <button onclick="showView('ranking')" class="font-bold uppercase text-sm hover:text-neon-fuchsia transition-colors text-neon-cyan">Ranking</button>
+                <button onclick="showView('admin')" class="font-bold uppercase text-sm text-neon-fuchsia border border-neon-fuchsia/50 px-3 py-1 rounded hover:bg-neon-fuchsia/10 transition-colors">
                     <i class="fa-solid fa-lock mr-1"></i> Admin
                 </button>
             </nav>
@@ -236,7 +402,7 @@
                     <input type="text" id="playerName" placeholder="Tu Nombre o Apodo" class="input-luxury rounded-lg px-4 py-3 w-full md:w-80 text-lg font-semibold">
                     <button onclick="registerPlayer()" class="gold-btn px-8 py-3 rounded-lg">PARTICIPAR</button>
                 </div>
-                <p id="nameSuggestion" class="text-amber-400 text-sm mt-3 hidden"></p>
+                <p id="nameSuggestion" class="text-neon-fuchsia text-sm mt-3 hidden"></p>
             </div>
 
             <div id="raceSelectionBlock" class="hidden-section glass-card rounded-2xl p-6">
@@ -249,39 +415,39 @@
 
             <div class="glass-card rounded-2xl p-6">
                 <h3 class="text-xl font-black uppercase mb-4 gold-text">Reglamento de Puntuación</h3>
-                <ul class="space-y-2 text-amber-100/80 list-disc list-inside">
-                    <li><strong class="text-amber-400">1er Lugar:</strong> 5 puntos. | <strong class="text-amber-400">2do Lugar:</strong> 3 puntos. | <strong class="text-amber-400">3er Lugar:</strong> 1 punto.</li>
-                    <li><strong>Empate 1er lugar:</strong> Ambos otorgan 5 pts, no se otorga puntuación al 3er lugar.</li>
-                    <li><strong>Empate 2do lugar:</strong> Ambos otorgan 3 pts, no se otorga puntuación al 3er lugar.</li>
-                    <li><strong>Empate 3er lugar:</strong> Ambos otorgan 1 pto.</li>
-                    <li><strong>Caballos Retirados:</strong> Se tomará el número siguiente activo. Si el siguiente también está retirado, se buscará el siguiente hasta encontrar un ejemplar activo.</li>
+                <ul class="space-y-2 text-gray-300 list-none rules-list">
+                    <li><span class="check-icon">✓</span> <span><strong class="text-neon-gold">1er Lugar:</strong> 5 puntos. | <strong class="text-neon-gold">2do Lugar:</strong> 3 puntos. | <strong class="text-neon-gold">3er Lugar:</strong> 1 punto.</span></li>
+                    <li><span class="check-icon">✓</span> <span><strong>Empate 1er lugar:</strong> Ambos otorgan 5 pts, no se otorga puntuación al 3er lugar.</span></li>
+                    <li><span class="check-icon">✓</span> <span><strong>Empate 2do lugar:</strong> Ambos otorgan 3 pts, no se otorga puntuación al 3er lugar.</span></li>
+                    <li><span class="check-icon">✓</span> <span><strong>Empate 3er lugar:</strong> Ambos otorgan 1 pto.</span></li>
+                    <li><span class="check-icon">✓</span> <span><strong>Caballos Retirados:</strong> Se tomará el número siguiente activo. Si el siguiente también está retirado, se buscará el siguiente hasta encontrar un ejemplar activo.</span></li>
                 </ul>
             </div>
         </section>
 
         <section id="view-ranking" class="hidden-section space-y-8">
             <h2 class="text-3xl font-black uppercase gold-text text-center">Tablas de Posiciones</h2>
-            <p class="text-amber-200/70 text-center">Ordenadas de mayor a menor puntaje</p>
+            <p class="text-gray-400 text-center">Ordenadas de mayor a menor puntaje</p>
             
             <div class="glass-card rounded-2xl p-6 overflow-x-auto">
-                <h3 class="text-lg font-black uppercase mb-4 text-amber-400">Tabla de Transparencia (Selecciones)</h3>
+                <h3 class="text-lg font-black uppercase mb-4 text-neon-gold">Tabla de Transparencia (Selecciones)</h3>
                 <table class="w-full text-left">
                     <thead>
-                        <tr class="text-amber-400 text-sm uppercase border-b border-amber-500/30">
+                        <tr class="text-neon-cyan text-sm uppercase border-b border-neon-cyan/30">
                             <th class="p-3">Nombre</th>
                             <th class="p-3 text-center">1V</th><th class="p-3 text-center">2V</th><th class="p-3 text-center">3V</th>
                             <th class="p-3 text-center">4V</th><th class="p-3 text-center">5V</th><th class="p-3 text-center">6V</th>
                         </tr>
                     </thead>
-                    <tbody id="transparencyTableBody" class="text-amber-100 text-sm"></tbody>
+                    <tbody id="transparencyTableBody" class="text-gray-300 text-sm"></tbody>
                 </table>
             </div>
 
             <div class="glass-card rounded-2xl p-6 overflow-x-auto">
-                <h3 class="text-lg font-black uppercase mb-4 text-amber-400">Ranking General con Puntaje</h3>
+                <h3 class="text-lg font-black uppercase mb-4 text-neon-gold">Ranking General con Puntaje</h3>
                 <table class="w-full text-left">
                     <thead>
-                        <tr class="text-amber-400 text-sm uppercase border-b border-amber-500/30">
+                        <tr class="text-neon-cyan text-sm uppercase border-b border-neon-cyan/30">
                             <th class="p-3">Nombre</th>
                             <th class="p-3 text-center">1V</th><th class="p-3 text-center">Pts</th>
                             <th class="p-3 text-center">2V</th><th class="p-3 text-center">Pts</th>
@@ -289,10 +455,10 @@
                             <th class="p-3 text-center">4V</th><th class="p-3 text-center">Pts</th>
                             <th class="p-3 text-center">5V</th><th class="p-3 text-center">Pts</th>
                             <th class="p-3 text-center">6V</th><th class="p-3 text-center">Pts</th>
-                            <th class="p-3 text-center font-black text-amber-400">Total</th>
+                            <th class="p-3 text-center font-black text-neon-gold">Total</th>
                         </tr>
                     </thead>
-                    <tbody id="rankingTableBody" class="text-amber-100 text-sm"></tbody>
+                    <tbody id="rankingTableBody" class="text-gray-300 text-sm"></tbody>
                 </table>
             </div>
         </section>
@@ -300,28 +466,28 @@
         <section id="view-admin" class="hidden-section space-y-6">
             <h2 class="text-3xl font-black uppercase gold-text text-center">Panel de Administrador</h2>
 
-            <div class="flex flex-wrap gap-2 border-b border-amber-500/30 mb-6">
+            <div class="flex flex-wrap gap-2 border-b border-neon-cyan/30 mb-6">
                 <button onclick="showAdminTab('montos')" class="admin-tab active-tab px-4 py-2 font-bold uppercase text-sm" data-tab="montos">Montos</button>
-                <button onclick="showAdminTab('carreras')" class="admin-tab px-4 py-2 font-bold uppercase text-sm text-amber-200/60" data-tab="carreras">Carreras / Retirados</button>
-                <button onclick="showAdminTab('resultados')" class="admin-tab px-4 py-2 font-bold uppercase text-sm text-amber-200/60" data-tab="resultados">Resultados</button>
-                <button onclick="showAdminTab('editar')" class="admin-tab px-4 py-2 font-bold uppercase text-sm text-amber-200/60" data-tab="editar">Editar Jugada</button>
-                <button onclick="showAdminTab('pdfs')" class="admin-tab px-4 py-2 font-bold uppercase text-sm text-amber-200/60" data-tab="pdfs">PDFs / WhatsApp</button>
+                <button onclick="showAdminTab('carreras')" class="admin-tab px-4 py-2 font-bold uppercase text-sm" data-tab="carreras">Carreras / Retirados</button>
+                <button onclick="showAdminTab('resultados')" class="admin-tab px-4 py-2 font-bold uppercase text-sm" data-tab="resultados">Resultados</button>
+                <button onclick="showAdminTab('editar')" class="admin-tab px-4 py-2 font-bold uppercase text-sm" data-tab="editar">Editar Jugada</button>
+                <button onclick="showAdminTab('pdfs')" class="admin-tab px-4 py-2 font-bold uppercase text-sm" data-tab="pdfs">PDFs / WhatsApp</button>
             </div>
 
             <div id="tab-montos" class="admin-content glass-card rounded-2xl p-6">
                 <h3 class="text-xl font-black uppercase mb-4 gold-text">Contabilidad Básica</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
-                        <label class="block text-amber-400 text-sm font-bold mb-2">Valor de la Jugada ($)</label>
+                        <label class="block text-neon-cyan text-sm font-bold mb-2 uppercase tracking-wider">Valor de la Jugada ($)</label>
                         <input type="number" id="betValue" value="10" class="input-luxury w-full rounded-lg px-4 py-2" onchange="updateBetValue(this.value)">
                     </div>
                     <div>
-                        <label class="block text-amber-400 text-sm font-bold mb-2">Total Recaudado (Simulado)</label>
+                        <label class="block text-neon-cyan text-sm font-bold mb-2 uppercase tracking-wider">Total Recaudado (Simulado)</label>
                         <input type="text" id="totalCollected" class="input-luxury w-full rounded-lg px-4 py-2" readonly>
                     </div>
                     <div>
-                        <label class="block text-amber-400 text-sm font-bold mb-2">Premio (80%)</label>
-                        <input type="text" id="prizePool" class="input-luxury w-full rounded-lg px-4 py-2 font-black text-amber-400" readonly>
+                        <label class="block text-neon-cyan text-sm font-bold mb-2 uppercase tracking-wider">Premio (80%)</label>
+                        <input type="text" id="prizePool" class="input-luxury w-full rounded-lg px-4 py-2 font-black text-neon-gold" readonly>
                     </div>
                 </div>
             </div>
@@ -334,7 +500,7 @@
 
             <div id="tab-resultados" class="admin-content hidden-section glass-card rounded-2xl p-6">
                 <h3 class="text-xl font-black uppercase mb-4 gold-text">Carga de Resultados (Solo Números)</h3>
-                <p class="text-amber-200/70 text-sm mb-4">Separa con coma si hay empate (ej: "3,5" para empate en 1er lugar).</p>
+                <p class="text-gray-400 text-sm mb-4">Separa con coma si hay empate (ej: "3,5" para empate en 1er lugar).</p>
                 <div id="adminResultsConfig" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                 <button onclick="calculateAllScores()" class="gold-btn mt-6 px-6 py-2 rounded-lg">Procesar Resultados y Puntuar</button>
             </div>
@@ -346,7 +512,7 @@
                     <button onclick="searchPlayerToEdit()" class="gold-btn px-6 py-2 rounded-lg">Buscar</button>
                 </div>
                 <div id="editPlayerForm" class="hidden-section space-y-4">
-                    <p class="text-amber-400 font-bold text-center">Editando a: <span id="editingPlayerName" class="text-white"></span></p>
+                    <p class="text-neon-fuchsia font-bold text-center">Editando a: <span id="editingPlayerName" class="text-white"></span></p>
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="editRacesGrid"></div>
                     <button onclick="saveEditedPrediction()" class="gold-btn px-6 py-2 rounded-lg w-full">Guardar Cambios</button>
                 </div>
@@ -355,7 +521,7 @@
             <div id="tab-pdfs" class="admin-content hidden-section glass-card rounded-2xl p-6">
                 <h3 class="text-xl font-black uppercase mb-4 gold-text">Exportar y Compartir</h3>
                 <textarea id="whatsappLog" rows="6" class="input-luxury w-full rounded-lg px-4 py-2 font-mono text-xs mb-2" readonly></textarea>
-                <button onclick="copyToClipboard()" class="text-amber-400 text-sm underline">Copiar al portapapeles</button>
+                <button onclick="copyToClipboard()" class="text-neon-cyan text-sm underline hover:text-neon-fuchsia transition-colors">Copiar al portapapeles</button>
                 <button onclick="generatePDF()" class="gold-btn mt-4 px-6 py-3 rounded-lg w-full">Descargar Ranking en PDF</button>
             </div>
         </section>
@@ -426,13 +592,13 @@
             document.querySelectorAll('.admin-content').forEach(el => el.classList.add('hidden-section'));
             document.getElementById(`tab-${tab}`).classList.remove('hidden-section');
             document.querySelectorAll('.admin-tab').forEach(el => {
-                el.classList.remove('active-tab', 'text-amber-400');
-                el.classList.add('text-amber-200/60');
+                el.classList.remove('active-tab', 'text-neon-cyan');
+                el.classList.add('text-gray-500');
             });
             const activeBtn = document.querySelector(`.admin-tab[data-tab="${tab}"]`);
             if (activeBtn) {
-                activeBtn.classList.add('active-tab', 'text-amber-400');
-                activeBtn.classList.remove('text-amber-200/60');
+                activeBtn.classList.add('active-tab', 'text-neon-cyan');
+                activeBtn.classList.remove('text-gray-500');
             }
         }
 
@@ -478,10 +644,10 @@
                 let buttonsHtml = '';
                 for (let j = 1; j <= race.count; j++) {
                     if (!race.scratched.includes(j)) {
-                        buttonsHtml += `<button type="button" id="btn-race-${i}-horse-${j}" onclick="selectHorse(${i}, ${j}, this)" class="horse-btn w-10 h-10 rounded-lg border border-amber-500/30 text-amber-400 font-bold text-sm">${j}</button>`;
+                        buttonsHtml += `<button type="button" id="btn-race-${i}-horse-${j}" onclick="selectHorse(${i}, ${j}, this)" class="horse-btn w-10 h-10 rounded-lg border text-neon-cyan font-bold text-sm">${j}</button>`;
                     }
                 }
-                grid.innerHTML += `<div class="bg-emerald-950/30 border border-amber-500/20 rounded-xl p-4"><h4 class="font-black uppercase text-amber-400 mb-3 text-center">${i}ª Válida</h4><div class="flex flex-wrap gap-2 justify-center">${buttonsHtml}</div></div>`;
+                grid.innerHTML += `<div class="bg-navy-950/50 border border-neon-cyan/20 rounded-xl p-4"><h4 class="font-black uppercase text-neon-fuchsia mb-3 text-center">${i}ª Válida</h4><div class="flex flex-wrap gap-2 justify-center">${buttonsHtml}</div></div>`;
             }
         }
 
@@ -523,9 +689,9 @@
                 let scratchedChecks = '';
                 for (let j = 1; j <= race.count; j++) {
                     const isScratched = race.scratched.includes(j) ? 'checked' : '';
-                    scratchedChecks += `<label class="inline-flex items-center mr-3 mb-2 cursor-pointer"><input type="checkbox" class="form-checkbox text-amber-500" onchange="toggleScratch(${i}, ${j}, this.checked)" ${isScratched}><span class="ml-2 text-amber-100 text-sm">#${j}</span></label>`;
+                    scratchedChecks += `<label class="inline-flex items-center mr-3 mb-2 cursor-pointer"><input type="checkbox" class="form-checkbox text-neon-fuchsia" onchange="toggleScratch(${i}, ${j}, this.checked)" ${isScratched}><span class="ml-2 text-gray-300 text-sm">#${j}</span></label>`;
                 }
-                container.innerHTML += `<div class="border border-amber-500/20 rounded-lg p-4 bg-emerald-950/20"><div class="flex items-center gap-4 mb-3"><label class="text-amber-400 font-bold w-32">${i}ª Válida:</label><input type="number" value="${race.count}" min="4" max="16" class="input-luxury w-20 rounded px-2 py-1 text-center" onchange="updateRaceCount(${i}, this.value)"><span class="text-amber-200/60 text-sm">ejemplares</span></div><div class="pl-32"><p class="text-amber-400 text-xs font-bold uppercase mb-2">Retirados:</p><div class="flex flex-wrap">${scratchedChecks}</div></div></div>`;
+                container.innerHTML += `<div class="border border-neon-cyan/20 rounded-lg p-4 bg-navy-950/30"><div class="flex items-center gap-4 mb-3"><label class="text-neon-fuchsia font-bold w-32">${i}ª Válida:</label><input type="number" value="${race.count}" min="4" max="16" class="input-luxury w-20 rounded px-2 py-1 text-center" onchange="updateRaceCount(${i}, this.value)"><span class="text-gray-400 text-sm">ejemplares</span></div><div class="pl-32"><p class="text-neon-cyan text-xs font-bold uppercase mb-2">Retirados:</p><div class="flex flex-wrap">${scratchedChecks}</div></div></div>`;
             }
         }
 
@@ -561,7 +727,7 @@
             container.innerHTML = '';
             for (let i = 1; i <= 6; i++) {
                 const res = resultsConfig[i];
-                container.innerHTML += `<div class="border border-amber-500/20 rounded-lg p-4 bg-emerald-950/20"><h4 class="font-black uppercase text-amber-400 mb-3 text-center">${i}ª Válida</h4><div class="space-y-3"><div><label class="text-amber-200 text-xs uppercase font-bold block mb-1">1er</label><input type="text" id="res-${i}-1" value="${res.first}" placeholder="3 o 3,5" class="input-luxury w-full rounded px-3 py-2 text-center font-bold"></div><div><label class="text-amber-200 text-xs uppercase font-bold block mb-1">2do</label><input type="text" id="res-${i}-2" value="${res.second}" placeholder="7" class="input-luxury w-full rounded px-3 py-2 text-center font-bold"></div><div><label class="text-amber-200 text-xs uppercase font-bold block mb-1">3er</label><input type="text" id="res-${i}-3" value="${res.third}" placeholder="2" class="input-luxury w-full rounded px-3 py-2 text-center font-bold"></div></div></div>`;
+                container.innerHTML += `<div class="border border-neon-cyan/20 rounded-lg p-4 bg-navy-950/30"><h4 class="font-black uppercase text-neon-fuchsia mb-3 text-center">${i}ª Válida</h4><div class="space-y-3"><div><label class="text-gray-400 text-xs uppercase font-bold block mb-1">1er</label><input type="text" id="res-${i}-1" value="${res.first}" placeholder="3 o 3,5" class="input-luxury w-full rounded px-3 py-2 text-center font-bold"></div><div><label class="text-gray-400 text-xs uppercase font-bold block mb-1">2do</label><input type="text" id="res-${i}-2" value="${res.second}" placeholder="7" class="input-luxury w-full rounded px-3 py-2 text-center font-bold"></div><div><label class="text-gray-400 text-xs uppercase font-bold block mb-1">3er</label><input type="text" id="res-${i}-3" value="${res.third}" placeholder="2" class="input-luxury w-full rounded px-3 py-2 text-center font-bold"></div></div></div>`;
             }
         }
 
@@ -631,7 +797,7 @@
             if (transBody) {
                 transBody.innerHTML = '';
                 allPlayers.forEach(p => {
-                    transBody.innerHTML += `<tr class="border-b border-amber-500/10"><td class="p-3 font-bold text-amber-400">${p.name}</td><td class="p-3 text-center">${p.picks[1]||'-'}</td><td class="p-3 text-center">${p.picks[2]||'-'}</td><td class="p-3 text-center">${p.picks[3]||'-'}</td><td class="p-3 text-center">${p.picks[4]||'-'}</td><td class="p-3 text-center">${p.picks[5]||'-'}</td><td class="p-3 text-center">${p.picks[6]||'-'}</td></tr>`;
+                    transBody.innerHTML += `<tr class="border-b border-neon-cyan/10"><td class="p-3 font-bold text-neon-fuchsia">${p.name}</td><td class="p-3 text-center">${p.picks[1]||'-'}</td><td class="p-3 text-center">${p.picks[2]||'-'}</td><td class="p-3 text-center">${p.picks[3]||'-'}</td><td class="p-3 text-center">${p.picks[4]||'-'}</td><td class="p-3 text-center">${p.picks[5]||'-'}</td><td class="p-3 text-center">${p.picks[6]||'-'}</td></tr>`;
                 });
             }
 
@@ -639,8 +805,8 @@
             if (rankBody) {
                 rankBody.innerHTML = '';
                 sortedPlayers.forEach((p, index) => {
-                    const isTop3 = index < 3 ? 'bg-amber-500/10 font-bold text-amber-400' : '';
-                    rankBody.innerHTML += `<tr class="border-b border-amber-500/10 ${isTop3}"><td class="p-3">${index+1}. ${p.name}</td><td class="p-3 text-center">${p.picks[1]||'-'}</td><td class="p-3 text-center">${p.scores[1]||0}</td><td class="p-3 text-center">${p.picks[2]||'-'}</td><td class="p-3 text-center">${p.scores[2]||0}</td><td class="p-3 text-center">${p.picks[3]||'-'}</td><td class="p-3 text-center">${p.scores[3]||0}</td><td class="p-3 text-center">${p.picks[4]||'-'}</td><td class="p-3 text-center">${p.scores[4]||0}</td><td class="p-3 text-center">${p.picks[5]||'-'}</td><td class="p-3 text-center">${p.scores[5]||0}</td><td class="p-3 text-center">${p.picks[6]||'-'}</td><td class="p-3 text-center">${p.scores[6]||0}</td><td class="p-3 text-center font-black text-amber-400">${p.total}</td></tr>`;
+                    const isTop3 = index < 3 ? 'bg-neon-fuchsia/10 font-bold text-neon-gold' : '';
+                    rankBody.innerHTML += `<tr class="border-b border-neon-cyan/10 ${isTop3}"><td class="p-3">${index+1}. ${p.name}</td><td class="p-3 text-center">${p.picks[1]||'-'}</td><td class="p-3 text-center">${p.scores[1]||0}</td><td class="p-3 text-center">${p.picks[2]||'-'}</td><td class="p-3 text-center">${p.scores[2]||0}</td><td class="p-3 text-center">${p.picks[3]||'-'}</td><td class="p-3 text-center">${p.scores[3]||0}</td><td class="p-3 text-center">${p.picks[4]||'-'}</td><td class="p-3 text-center">${p.scores[4]||0}</td><td class="p-3 text-center">${p.picks[5]||'-'}</td><td class="p-3 text-center">${p.scores[5]||0}</td><td class="p-3 text-center">${p.picks[6]||'-'}</td><td class="p-3 text-center">${p.scores[6]||0}</td><td class="p-3 text-center font-black text-neon-gold">${p.total}</td></tr>`;
                 });
             }
         }
@@ -668,10 +834,10 @@
                         if (!race.scratched.includes(j)) {
                             const isSelected = playerEditing.picks[i] == j;
                             const activeClasses = isSelected ? 'selected' : '';
-                            buttonsHtml += `<button type="button" onclick="selectEditHorse(${i}, ${j}, this)" class="horse-btn w-10 h-10 rounded-lg border border-amber-500/30 text-amber-400 font-bold text-sm ${activeClasses}">${j}</button>`;
+                            buttonsHtml += `<button type="button" onclick="selectEditHorse(${i}, ${j}, this)" class="horse-btn w-10 h-10 rounded-lg border text-neon-cyan font-bold text-sm ${activeClasses}">${j}</button>`;
                         }
                     }
-                    grid.innerHTML += `<div class="bg-emerald-950/20 border border-amber-500/20 rounded-lg p-3"><label class="text-amber-400 text-xs font-black uppercase block mb-2 text-center">${i}ª Válida</label><div class="flex flex-wrap gap-2 justify-center">${buttonsHtml}</div></div>`;
+                    grid.innerHTML += `<div class="bg-navy-950/30 border border-neon-cyan/20 rounded-lg p-3"><label class="text-neon-fuchsia text-xs font-black uppercase block mb-2 text-center">${i}ª Válida</label><div class="flex flex-wrap gap-2 justify-center">${buttonsHtml}</div></div>`;
                 }
             } else {
                 alert("Jugador no encontrado");
@@ -729,7 +895,7 @@
                     margin: 0.5,
                     filename: 'Ranking_Polla_Hipica.pdf',
                     image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#022c22' },
+                    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#05081a' },
                     jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
                 };
 
